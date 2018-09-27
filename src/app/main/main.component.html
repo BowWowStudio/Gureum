@@ -1,3 +1,16 @@
-<p>
-  main works!
-</p>
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button mat-button routerLink="/">
+      <span>
+      Locked Cabinet
+      </span>
+    </button>
+    <button mat-button routerLink="/write">Write</button>
+    <button mat-button routerLink="/read">Read</button>
+    <button mat-button routerLink="/help">Help</button>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="paddingDiv">
+  <router-outlet></router-outlet>
+</div> 
+
