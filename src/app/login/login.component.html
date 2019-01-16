@@ -17,13 +17,13 @@
       <mat-card-content>
         <form>
           <mat-form-field class="full-width">
-            <input matInput type="text" placeholder="ID">
+            <input matInput type="text" placeholder="ID" name="id" [(ngModel)]="loginInfo.id">
           </mat-form-field>
           <mat-form-field class="full-width">
-            <input matInput type="password" placeholder="Password">
+            <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="loginInfo.password">
           </mat-form-field>
           <div id="loginButtonDiv">
-            <button mat-raised-button type="submit" (click)="loadTrue()" routerLink="/">Log In</button>
+            <button mat-raised-button type="submit" (click)="LogIn()" >Log In</button>
             <button mat-raised-button type="button" color="accent" (click)="loadTrue()" routerLink="/signup">Sign Up
             </button>
           </div>

@@ -5,3 +5,8 @@ export interface Event {
   description: string;
   title: string;
 }
+export interface Post {
+  title: string;
+  date: Date;
+  body: string;
+}

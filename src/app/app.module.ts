@@ -51,6 +51,9 @@ import {ReadComponent} from './main/read/read.component';
 import {CdkTableModule} from "@angular/cdk/table";
 import {CdkTreeModule} from "@angular/cdk/tree";
 import {HelpComponent} from './main/help/help.component';
+import { HttpService } from './service/http.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   exports: [
@@ -111,9 +114,11 @@ export class DemoMaterialModule {
     BrowserAnimationsModule,
     AppRoutingModule,
     FontAwesomeModule,
-    DemoMaterialModule
+    DemoMaterialModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [HttpService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
