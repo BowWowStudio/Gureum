@@ -5,16 +5,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatProgressBarModule,
          MatCardModule, MatIconModule } from '@angular/material';
-import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
+import { AuthComponent } from './auth-component/auth.component';
 
 // Components
-import { AuthComponent } from './auth.component';
-import { PhoneSigninComponent } from './phone-signin/phone-signin.component';
 
 @NgModule({
   declarations: [
     AuthComponent,
-    PhoneSigninComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +19,6 @@ import { PhoneSigninComponent } from './phone-signin/phone-signin.component';
     FormsModule,
     MatButtonModule, MatInputModule, MatProgressBarModule,
     MatCardModule, MatIconModule,
-    NgxAuthFirebaseUIModule
   ],
   providers: [
   ],
@@ -31,7 +27,6 @@ import { PhoneSigninComponent } from './phone-signin/phone-signin.component';
   ],
   exports: [
     AuthComponent,
-    PhoneSigninComponent
   ]
 })
 export class AuthModule {

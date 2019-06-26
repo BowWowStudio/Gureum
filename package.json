@@ -29,9 +29,7 @@
     "compodoc:s": "compodoc -p src/tsconfig.app.json --serve",
     "compodoc:w": "compodoc -p src/tsconfig.app.json --serve --watch",
     "tscov": "tscov -m 90",
-    "tscov:d": "tscov --details",
-    "link-upstream": "git remote add upstream https://github.com/jeroenouw/AngularMaterialFirebase",
-    "sync": "git fetch && git checkout master && git merge upstream/master && git push"
+    "tscov:d": "tscov --details"
   },
   "dependencies": {
     "@angular/animations": "^8.0.0",
@@ -50,7 +48,6 @@
     "core-js": "^3.1.3",
     "firebase": "^5.7.3",
     "hammerjs": "^2.0.8",
-    "ngx-auth-firebaseui": "^2.2.1",
     "rxjs": "^6.5.0",
     "rxjs-compat": "^6.5.0",
     "ts-helpers": "*",
@@ -61,7 +58,7 @@
     "@angular/cli": "^8.0.0",
     "@angular/compiler-cli": "^8.0.0",
     "@angular/language-service": "^8.0.0",
-    "@compodoc/compodoc": "^1.1.7",
+    "@compodoc/compodoc": "^1.1.9",
     "@liftr/tscov": "^1.4.1",
     "@types/jasmine": "^3.3.9",
     "@types/node": "^11.10.4",

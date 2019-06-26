@@ -9,9 +9,23 @@ import { AuthService } from '@shared';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
-
+  private userEmail : string;
+  private passWord : string;
+  public showSpinner = false;
   constructor(private authService: AuthService) {}
 
+  public async login() : Promise<void> {
+    try{
+      this.showSpinner = true;
+      const credential = await this.authService.login(this.userEmail,this.passWord);
+      if(credential){
+        this.onSuccess();
+      }
+    }
+    finally{
+      this.showSpinner = false;
+    }
+  }
   public onSuccess(): void {
     return this.authService.onSuccess();
   }

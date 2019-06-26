@@ -10,7 +10,10 @@ export class AuthService {
   constructor(
     private router: Router,
     private auth: AngularFireAuth) { }
-
+  
+  public login(email:string, password: string):Promise<firebase.auth.UserCredential> {
+    return this.auth.auth.signInWithEmailAndPassword(email,password);
+  }
   public onSuccess(): void {
     sessionStorage.setItem('session-alive', 'true');
     this.token = 'some-temporary-token';
