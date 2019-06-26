@@ -1,27 +1,43 @@
-# LockedCabinetUi
+[![demolive](https://img.shields.io/badge/demo-live-green.svg)](http://ngxmatfire.jerouw.nl/)
+[![npmversion](https://img.shields.io/npm/v/ngxmatfire.svg)]()
+[![npmlicense](https://img.shields.io/npm/l/ngxmatfire.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)
+[![stars](https://img.shields.io/github/stars/jeroenouw/AngularMaterialFirebase.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/stargazers)
+[![downloads](https://img.shields.io/npm/dt/ngxmatfire.svg)]()
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.3.
+![logo](https://jerouw.nl/wp-content/uploads/2017/05/ngfbmd.png "Logo")
 
-## Development server
+# Angular 8 | Material Design | Firebase - Starter kit
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+A full stack starter app containing [Angular 8](https://angular.io), [Material](https://material.io/) and [Firebase](https://firebase.google.com/). See also: [AngularMaterialGo](https://github.com/jeroenouw/AngularMaterialGo)
 
-## Code scaffolding
+## [Live demo](http://ngxmatfire.jerouw.nl)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+![loginpage](https://jerouw.nl/wp-content/uploads/2017/05/ngfbmdprintscreen.png "Logo")
 
-## Build
+## Quick start, Development & Production
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+[Get started now](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/DEVELOPER.md)
 
-## Running unit tests
+## All features
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+[Discover all the features in this project](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/FEATURES.md)
 
-## Running end-to-end tests
+## [Live automated documentation](http://ngxmatfire-docs.jerouw.nl)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+[Generate technical documentation automatically with Compodoc](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/COMPODOC.md)
 
-## Further help
+## Check your type coverage
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+[See your type coverage with tscov](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/TSCOV.md)
+
+## Future updates
+
+[To do and finish list](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/TODO.md)
+
+## Contributing
+
+Want to file a bug, contribute some code, or improve documentation? Feel free to place an [issue](https://github.com/jeroenouw/AngularMaterialFirebase/issues).
+
+## License
+
+[![npmlicense](https://img.shields.io/npm/l/ngxmatfire.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)
