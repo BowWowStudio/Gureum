@@ -3,11 +3,12 @@
 # compiled output
 /dist
 /tmp
-/out-tsc
 
 # dependencies
 /node_modules
-/package-lock.json
+
+# compodoc documentation
+/documentation
 
 # IDEs and editors
 /.idea
@@ -16,9 +17,9 @@
 .c9/
 *.launch
 .settings/
-*.sublime-workspace
 
 # IDE - VSCode
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -28,13 +29,17 @@
 # misc
 /.sass-cache
 /connect.lock
-/coverage
+/coverage/*
 /libpeerconnection.log
 npm-debug.log
-yarn-error.log
 testem.log
 /typings
+package-lock.json
 
-# System Files
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+#System Files
 .DS_Store
 Thumbs.db
