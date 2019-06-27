@@ -28,4 +28,6 @@ export class SignupComponentComponent implements OnInit {
       this.snackBar.open('User Created');
     }
   }
+  styleUrls: ['./signup-component.component.css']
+})
 }

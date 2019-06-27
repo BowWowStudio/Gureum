@@ -7,12 +7,25 @@
 }
 
 .container {
-  z-index: 20;
-  display: inherit;
-  padding: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #eee;
 }
 
 body{
   height:100%;
   margin:0px;
+.mat-drawer-container{ overflow: visible; }
+
+.a {
+  background-color: darkgray;
+}
+.active-link{
+  background-color: darkslategrey;
+  color:white;
+}
+.menuButton:focus{
+  outline:0px;
 }
