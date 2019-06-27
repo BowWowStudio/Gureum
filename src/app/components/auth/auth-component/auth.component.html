@@ -3,24 +3,18 @@
     <mat-card-title>Login</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name"
-                required
-                [(ngModel)]="model.name" name="name">
-      </div>
     <form class="example-form">
       <table class="example-full-width" cellspacing="0">
         <tr>
           <td>
             <mat-form-field class="example-full-width">
-            <input matInput placeholder="Username" [(ngModel)]="userEmail" name="userEmail" required>
+            <input matInput placeholder="Username"  name="userEmail" required>
             </mat-form-field>
           </td>
         </tr>
         <tr>
         <td><mat-form-field class="example-full-width">
-          <input matInput placeholder="Password" [(ngModel)]="passWord"type="password" name="passWord" required>
+          <input matInput placeholder="Password" type="password" name="passWord" required>
         </mat-form-field></td>
       </tr></table>
     </form>

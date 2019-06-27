@@ -1,7 +1,23 @@
-<mat-sidenav-container class="container">
-
-    <app-header></app-header><br />
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-
-</mat-sidenav-container>
+<div fxLayout="column" fxFlex=100>
+    <mat-toolbar color="primary" fxFlex="64px">
+        <mat-toolbar-row>
+            <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon class="mat-18">menu</mat-icon>
+            </button>
+            <span>Custom Toolbar</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
+        <mat-sidenav #sidenav mode="side" fxFlex="150px">
+            <mat-list role="list"  >
+                <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
+                    <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
+                    <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
+                </ng-container>
+            </mat-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

@@ -4,10 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
          MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule,
-         MatCardModule, MatTabsModule, MatIconModule } from '@angular/material';
+         MatCardModule, MatTabsModule, MatIconModule, MatListModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 // Modules
 import { PipesModule } from '@shared/pipes/pipes.module';
 
@@ -30,6 +30,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireModule } from '@angular/fire';
 import { firebaseKeys } from './firebase.config';
 import { DashboardModule } from './components/dashboard/dashboard.module';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 // Pages
 
@@ -43,8 +45,9 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
     AngularFireModule.initializeApp(firebaseKeys),
     BrowserModule,
     BrowserAnimationsModule,
+    CommonModule,
     MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
-    MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule,
+    MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule, MatListModule,
     MatCardModule, MatTabsModule, MatIconModule,
     FormsModule,
     ReactiveFormsModule,
@@ -53,6 +56,8 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
     PipesModule,
     AuthModule,
     DashboardModule,
+    FlexLayoutModule,
+    RouterModule
   ],
   providers: [
     UserService,

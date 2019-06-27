@@ -1,3 +1,9 @@
-<p>
-  fileUpload works!
-</p>
+<form novalidate (ngSubmit)="onSubmit()">
+  <div class="button-row">
+    <button type="button" mat-button color="accent" mat-mini-fab (click)="imgFileInput.click()">
+      <mat-icon>attachment</mat-icon>
+    </button>
+    <input hidden type="file" #imgFileInput (change)="fileChangeEvent($event)" />
+  </div>
+  <button mat-button type="submit">Submit</button>
+</form>
