@@ -12,6 +12,7 @@ const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch : 'full' },
   { path: 'home', component: AuthComponent },
 
+  { path:'dashboard', component:}
   // Protected pages
   // { path: 'profile/:uid/:name', component: ProfileComponent, canActivate: [AuthGuardService] },
 ];

@@ -29,6 +29,7 @@ import { AuthModule } from './components/auth/auth.module';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireModule } from '@angular/fire';
 import { firebaseKeys } from './firebase.config';
+import { DashboardModule } from './components/dashboard/dashboard.module';
 
 // Pages
 
@@ -51,6 +52,7 @@ import { firebaseKeys } from './firebase.config';
     AppRoutingModule,
     PipesModule,
     AuthModule,
+    DashboardModule,
   ],
   providers: [
     UserService,
