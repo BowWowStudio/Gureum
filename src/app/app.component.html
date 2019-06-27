@@ -1,7 +1,13 @@
-<mat-sidenav-container class="container">
+<ng-container *ngIf="isAuth(); else main">
+    <div fxLayoutAlign="center center">
+        <router-outlet></router-outlet>
+    </div>
+</ng-container>
+<ng-template #main>
+    <mat-sidenav-container class="container">
+        <router-outlet></router-outlet>
+    </mat-sidenav-container>
+</ng-template>
 
-    <app-header></app-header><br />
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
 
-</mat-sidenav-container>
+

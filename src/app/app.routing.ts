@@ -2,6 +2,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './components/auth/auth-component/auth.component';
+import { SignupComponentComponent } from './components/auth/signup-component/signup-component.component';
 
 // Protected
 
@@ -9,8 +10,9 @@ import { AuthComponent } from './components/auth/auth-component/auth.component';
 const appRoutes: Routes = [
 
   // Public pages
-  { path: '', redirectTo: '/home', pathMatch : 'full' },
-  { path: 'home', component: AuthComponent },
+  { path: '', redirectTo: '/login', pathMatch : 'full' },
+  { path: 'login', component: AuthComponent },
+  { path: 'register', component: SignupComponentComponent },
 
   // Protected pages
   // { path: 'profile/:uid/:name', component: ProfileComponent, canActivate: [AuthGuardService] },

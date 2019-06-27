@@ -1,0 +1,15 @@
+<form [formGroup]="form" (ngSubmit)="register()" fxLayout="column" fxLayoutAlign="center center">  
+    <mat-form-field>
+        <input matInput placeholder="Name"  formControlName = "name">
+      </mat-form-field>  
+    <mat-form-field>
+      <input matInput placeholder="Email"  formControlName = "email">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Password"  formControlName = "password" type="password">
+    </mat-form-field>
+    <div fxLayout="row" fxLayoutAlign="space-between stretch" class="buttonDiv">
+        <button mat-button type="submit">Sign up</button>
+        <button mat-button type="button" routerLink="/login">Cancel</button>
+    </div>
+</form>

@@ -7,7 +7,7 @@ import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatS
          MatCardModule, MatTabsModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 // Modules
 import { PipesModule } from '@shared/pipes/pipes.module';
 
@@ -51,6 +51,7 @@ import { firebaseKeys } from './firebase.config';
     AppRoutingModule,
     PipesModule,
     AuthModule,
+    FlexLayoutModule
   ],
   providers: [
     UserService,
