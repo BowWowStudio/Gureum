@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
 import { Menu, MenuDetail } from '@shared/interfaces/app.type';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '@shared/services/auth.service';
 
 @Component({
   selector: "app-root",
@@ -15,8 +16,8 @@ export class AppComponent implements OnInit {
   public menu = Menu;
   public menuDetails: MenuDetail[];
 
-  constructor(private route: Router, private activatedRoute : ActivatedRoute) {
-    
+  constructor(private route: Router, private authService: AuthService, ) {
+
     this.menuDetails = [{
       name: 'My Drive',
       isHover: false,
@@ -36,32 +37,28 @@ export class AppComponent implements OnInit {
       corresMenu: Menu.RECENT,
       isActive : false,
     }];
-    
+
   }
   public ngOnInit(): void {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseKeys);
     }
-    this.activatedRoute.url.subscribe(url=>{
-      console.log(url);
-    })
   }
 
   public toggleSideNav() {
     this.sideNavOpen = !this.sideNavOpen;
   }
   public navigate(menu: Menu) {
-    const corresMenuDetail = this.menuDetails.find(detail=>detail.corresMenu === menu);
-    switch (menu) {
-      case Menu.UPLOAD: this.route.navigate(corresMenuDetail.url);
-        break;
-      case Menu.SHARE: this.route.navigate(['dashboard', 'shared']);
-        break;
-      case Menu.RECENT: this.route.navigateByUrl('/recent');
-        break;
-    }
+    const corresMenuDetail = this.menuDetails.find(detail => detail.corresMenu === menu);
+    this.route.navigate(corresMenuDetail.url);
   }
   public isAuth(): boolean {
-    return this.auth.includes(this.router.url);
+    return this.auth.includes(this.route.url);
+  }
+  public logOut(): void {
+    this.authService.logout();
+  }
+  public profilePage(): void {
+    this.route.navigate(['dashboard', 'profile']);
   }
 }

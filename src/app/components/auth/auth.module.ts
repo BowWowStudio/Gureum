@@ -33,6 +33,7 @@ import { RouterModule } from '@angular/router';
     MatSnackBarModule,
     FlexLayoutModule,
     RouterModule,
+    
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

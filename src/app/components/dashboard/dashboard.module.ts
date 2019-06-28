@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatProgressBarModule, MatCardModule, MatIconModule } from '@angular/material';
 import { FileUploadComponent } from './fileUpload/fileUpload.component';
 import { ShareComponent } from './share/share.component';
+import { ProfileComponent } from './profile/profile.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   imports: [
@@ -14,15 +16,17 @@ import { ShareComponent } from './share/share.component';
     MatButtonModule, MatInputModule, MatProgressBarModule,
     MatCardModule, MatIconModule,
     ReactiveFormsModule,
+    
+    FlexLayoutModule,
   ],
-  declarations: [FileUploadComponent, ShareComponent],
+  declarations: [FileUploadComponent, ShareComponent, ProfileComponent],
   providers: [
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
   exports: [
-    FileUploadComponent,ShareComponent
+    FileUploadComponent,ShareComponent, ProfileComponent
   ]
 })
 export class DashboardModule { }

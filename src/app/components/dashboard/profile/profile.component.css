@@ -1,0 +1,10 @@
+:host{
+    width:80%;
+    height: 80%;
+}
+.height100Percent{
+    height:100%;
+}
+.name{
+    font-size: 30px;
+}

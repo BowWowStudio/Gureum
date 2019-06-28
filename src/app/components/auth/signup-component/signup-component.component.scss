@@ -1,3 +1,22 @@
+@import './../../../app.component.scss';
+
 .buttonDiv{
+    width:100%;
+}
+
+#title {
+    font-size: 100px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+#titleContainer{
+    padding-bottom: 30px;
+}
+
+.width100Percent{
     width:100%;
 }

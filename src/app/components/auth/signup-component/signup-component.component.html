@@ -1,15 +1,22 @@
-<form [formGroup]="form" (ngSubmit)="register()" fxLayout="column" fxLayoutAlign="center center">  
-    <mat-form-field>
-        <input matInput placeholder="Name"  formControlName = "name">
-      </mat-form-field>  
-    <mat-form-field>
-      <input matInput placeholder="Email"  formControlName = "email">
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="Password"  formControlName = "password" type="password">
-    </mat-form-field>
-    <div fxLayout="row" fxLayoutAlign="space-between stretch" class="buttonDiv">
-        <button mat-button type="submit">Sign up</button>
-        <button mat-button type="button" routerLink="/login">Cancel</button>
-    </div>
-</form>
+<mat-card>
+    <mat-card-header fxLayout="row" fxLayoutAlign="center center" id="titleContainer">
+      <mat-card-title class="title" id="title">Gureum</mat-card-title>
+    </mat-card-header>
+  <mat-card-content fxLayout="row" fxLayoutAlign="center center">
+      <form [formGroup]="form" (ngSubmit)="register()" fxLayout="column" fxLayoutAlign="center center" fxFlex="300px">  
+          <mat-form-field class="width100Percent">
+              <input fxFlex="100" matInput placeholder="Name"  formControlName = "name">
+            </mat-form-field>  
+          <mat-form-field class="width100Percent">
+            <input matInput placeholder="Email"  formControlName = "email">
+          </mat-form-field>
+          <mat-form-field class="width100Percent">
+              <input matInput placeholder="Password"  formControlName = "password" type="password">
+          </mat-form-field>
+          <div fxLayout="row" fxLayoutAlign="space-between stretch" class="buttonDiv">
+              <button mat-button type="submit">Sign up</button>
+              <button mat-button type="button" routerLink="/login">Cancel</button>
+          </div>
+      </form>
+  </mat-card-content>
+</mat-card>

@@ -17,6 +17,7 @@
 body{
   height:100%;
   margin:0px;
+}
 .mat-drawer-container{ overflow: visible; }
 
 .a {
@@ -26,6 +27,19 @@ body{
   background-color: darkslategrey;
   color:white;
 }
+
 .menuButton:focus{
   outline:0px;
+}
+
+.width100Percent{
+  width:100%;
+}
+
+.example-icon {
+  padding: 0 14px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
 }

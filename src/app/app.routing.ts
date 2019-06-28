@@ -7,6 +7,8 @@ import { AuthGuardService } from '@shared/services/auth-guard.service';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 import { FileUploadComponent } from './components/dashboard/fileUpload/fileUpload.component';
 import { ShareComponent } from './components/dashboard/share/share.component';
+import { LoginGuardService } from '@shared/services/login-guard.service';
+import { ProfileComponent } from './components/dashboard/profile/profile.component';
 
 // Protected
 
@@ -14,13 +16,15 @@ import { ShareComponent } from './components/dashboard/share/share.component';
 const appRoutes: Routes = [
 
   // Public pages
-  { path: '', redirectTo: '/login', pathMatch : 'full' },
-  { path: 'login', component: AuthComponent },
-  { path: 'register', component: SignupComponentComponent },
+  { path: '', redirectTo: '/login', pathMatch : 'full', canActivate:[LoginGuardService]},
+  { path: 'login', component: AuthComponent, canActivate:[LoginGuardService]},
+  { path: 'register', component: SignupComponentComponent ,canActivate:[LoginGuardService]},
 
-  { path: 'dashboard', children: [
-    {path: 'main', component: FileUploadComponent, },
-    {path: 'shared', component: ShareComponent}
+  { path: 'dashboard',  canActivateChild:[AuthGuardService], children: [
+    {path: '', redirectTo : 'main', pathMatch : 'full'},
+    {path: 'main', component: FileUploadComponent },
+    {path: 'shared', component: ShareComponent},
+    {path: 'profile', component: ProfileComponent},
   ]
 },
 

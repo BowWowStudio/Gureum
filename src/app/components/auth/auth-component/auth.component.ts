@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthService } from '@shared';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -11,7 +12,7 @@ import { AuthService } from '@shared';
 export class AuthComponent {
   public form: FormGroup;
   public showSpinner = false;
-  constructor(private authService: AuthService, private fb: FormBuilder) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router:Router) {
     this.form = fb.group({
       'email': ['', Validators.required],
       'password': ['', Validators.required],
@@ -22,8 +23,9 @@ export class AuthComponent {
     try {
       this.showSpinner = true;
       const credential = await this.authService.login(this.form.get('email').value, this.form.get('password').value);
-      if (credential) {
+      if (credential || this.authService.isAuthenticated()) {
         this.onSuccess();
+        this.router.navigate(['/dashboard']);
       }
     } catch (err) {
       console.error(err);

@@ -33,14 +33,14 @@ export class AuthService {
   }
   public onSuccess(): void {
     sessionStorage.setItem('session-alive', 'true');
-    this.auth.idToken.subscribe(token => {this.token = token;
-        this.router.navigate(['/']);
-      });
-
+    this.auth.idToken.subscribe(token => {
+      this.token = token;
+    });
   }
 
   public logout(): void {
     sessionStorage.removeItem('session-alive');
+    this.auth.auth.signOut();
     this.token = null;
     this.router.navigate(['/']);
   }
@@ -54,6 +54,9 @@ export class AuthService {
   }
 
   public isAuthenticated(): string {
+    if (firebase.auth().currentUser){
+      return 'true';
+    }
     return sessionStorage.getItem('session-alive');
   }
 }

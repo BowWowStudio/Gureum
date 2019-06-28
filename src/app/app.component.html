@@ -1,4 +1,5 @@
 <ng-container *ngIf="isAuth(); else main">
+    <mat-progress-bar mode="indeterminate" *ngIf="showSpinner"></mat-progress-bar>
     <div fxLayoutAlign="center center">
         <router-outlet></router-outlet>
     </div>
@@ -10,7 +11,25 @@
             <button mat-icon-button (click)="sidenav.toggle()">
                 <mat-icon class="mat-18">menu</mat-icon>
             </button>
-            <span>Custom Toolbar</span>
+            <span>Gureum</span>
+            <span class="example-spacer"></span>
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="profilePage()">
+                      <mat-icon>account_circle</mat-icon>
+                      <span>Profile</span>
+                    </button>
+                    <button mat-menu-item disabled>
+                      <mat-icon>settings</mat-icon>
+                      <span>Settings</span>
+                    </button>
+                    <button mat-menu-item (click)="logOut()">
+                      <mat-icon>exit_to_app</mat-icon>
+                      <span>Logout</span>
+                    </button>
+                  </mat-menu>
         </mat-toolbar-row>
     </mat-toolbar>
     <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
@@ -22,8 +41,8 @@
                 </ng-container>
             </mat-list>
         </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet></router-outlet>
+        <mat-sidenav-content class="width100Percent" fxLayout="row" fxLayoutAlign="center center">
+            <router-outlet ></router-outlet>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>
