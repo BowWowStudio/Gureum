@@ -9,6 +9,7 @@ import { FileUploadComponent } from './components/dashboard/fileUpload/fileUploa
 import { ShareComponent } from './components/dashboard/share/share.component';
 import { LoginGuardService } from '@shared/services/login-guard.service';
 import { ProfileComponent } from './components/dashboard/profile/profile.component';
+import { FileListComponent } from './components/dashboard/fileList/fileList.component';
 
 // Protected
 
@@ -22,7 +23,8 @@ const appRoutes: Routes = [
 
   { path: 'dashboard',  canActivateChild:[AuthGuardService], children: [
     {path: '', redirectTo : 'main', pathMatch : 'full'},
-    {path: 'main', component: FileUploadComponent },
+    {path: 'upload', component:FileUploadComponent},
+    {path: 'main', component: FileListComponent },
     {path: 'shared', component: ShareComponent},
     {path: 'profile', component: ProfileComponent},
   ]

@@ -19,23 +19,25 @@ export class AppComponent implements OnInit {
   constructor(private route: Router, private authService: AuthService, ) {
 
     this.menuDetails = [{
+      name: 'Upload',
+      isHover: false,
+      url: ['dashboard', 'upload'],
+      corresMenu: Menu.UPLOAD,
+    },{
       name: 'My Drive',
       isHover: false,
       url: ['dashboard', 'main'],
-      corresMenu: Menu.UPLOAD,
-      isActive : false,
+      corresMenu: Menu.MAIN,
     }, {
       name: 'Shared',
       isHover: false,
       url: ['dashboard', 'shared'],
       corresMenu: Menu.SHARE,
-      isActive: false,
     }, {
       name: 'Recent',
       isHover: false,
       url: ['dashboard', 'recent'],
       corresMenu: Menu.RECENT,
-      isActive : false,
     }];
 
   }

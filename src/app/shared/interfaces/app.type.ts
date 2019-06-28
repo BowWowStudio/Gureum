@@ -1,5 +1,6 @@
 export enum Menu {
     UPLOAD,
+    MAIN,
     SHARE,
     RECENT
 }
@@ -8,5 +9,4 @@ export interface MenuDetail {
     url: string[];
     isHover: boolean;
     corresMenu: Menu;
-    isActive : boolean;
 };

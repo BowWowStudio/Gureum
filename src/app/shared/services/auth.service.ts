@@ -52,7 +52,9 @@ export class AuthService {
       );
     return this.token;
   }
-
+  public getUser():firebase.User{
+    return this.auth.auth.currentUser;
+  }
   public isAuthenticated(): string {
     if (firebase.auth().currentUser){
       return 'true';
