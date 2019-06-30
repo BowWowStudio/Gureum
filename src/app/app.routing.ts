@@ -23,6 +23,7 @@ const appRoutes: Routes = [
 
   { path: 'dashboard',  canActivateChild:[AuthGuardService], children: [
     {path: '', redirectTo : 'main', pathMatch : 'full'},
+    {path: 'folder/:hash', component: FileListComponent},
     {path: 'upload', component:FileUploadComponent},
     {path: 'main', component: FileListComponent },
     {path: 'shared', component: ShareComponent},

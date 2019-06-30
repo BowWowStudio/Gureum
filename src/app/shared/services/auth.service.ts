@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public token: string;
+  public user: firebase.User;
   private db: firebase.firestore.Firestore;
   constructor(
     private router: Router,
@@ -28,8 +30,10 @@ export class AuthService {
         return false;
       }
     }
-  public login(email: string, password: string): Promise<firebase.auth.UserCredential> {
-    return this.auth.auth.signInWithEmailAndPassword(email, password);
+  public async login(email: string, password: string): Promise<firebase.auth.UserCredential> {
+    const credential = await this.auth.auth.signInWithEmailAndPassword(email, password);
+    this.user = credential.user;
+    return credential;
   }
   public onSuccess(): void {
     sessionStorage.setItem('session-alive', 'true');
@@ -52,8 +56,8 @@ export class AuthService {
       );
     return this.token;
   }
-  public getUser():firebase.User{
-    return this.auth.auth.currentUser;
+  public getUser(): Observable<firebase.User>{
+    return this.auth.authState;
   }
   public isAuthenticated(): string {
     if (firebase.auth().currentUser){

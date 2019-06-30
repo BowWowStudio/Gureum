@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import * as firebase from 'firebase';
-import { FileListDetail, DirectoryFile } from './fileUpload.type';
+import { FileListDetail, DirectoryFile, FileDataStore } from './fileUpload.type';
 import { map } from 'rxjs/operators';
 import { _MatCheckboxRequiredValidatorModule } from '@angular/material';
 import { AuthService } from '@shared/services/auth.service';
+import { CryptoService } from '@shared/services/Crypto.service';
 
 @Component({
   selector: 'app-fileUpload',
@@ -12,16 +13,18 @@ import { AuthService } from '@shared/services/auth.service';
   styleUrls: ['./fileUpload.component.scss']
 })
 export class FileUploadComponent implements OnInit {
+  private db: firebase.firestore.Firestore;
   public formGroup: FormGroup;
   public file: File | null = null;
   public files: FileListDetail | null = null;
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private hash: CryptoService) {
     this.formGroup = this.fb.group({
       file: [null, Validators.required]
     });
   }
 
   public ngOnInit() {
+    this.db = firebase.firestore();
   }
   public async fileChangeEvent(fileInput: Event) {
     const fileTarget = fileInput.target as HTMLInputElement;
@@ -39,30 +42,50 @@ export class FileUploadComponent implements OnInit {
     }
   }
   public async onSubmit() {
-    const ref = firebase.storage().ref(this.auth.getUser().uid);
-    if (this.file === null) {
-      await this.uploadFolder(ref, this.files);
-    } else {
-      await this.uploadFile(ref, this.file);
-    }
+    this.auth.getUser().subscribe(async (user) => {
+      const ref = firebase.storage().ref(user.uid);
+      if (this.file === null) {
+        await this.uploadFolder(ref, this.files);
+      } else {
+        await this.uploadFile(ref, this.file);
+      }
+    });
   }
   public async uploadFile(ref: firebase.storage.Reference, file: File) {
     await ref.child(file.name).put(file);
+    const fullPath = `${ref.fullPath}/${file.name}`;
+    const hash = await this.hash.findHash(file, fullPath);
+    this.auth.getUser().subscribe(async (user) => {
+      const newDoc: FileDataStore = {
+        path: ref.fullPath,
+        owner: user.uid,
+        bucket: ref.bucket,
+        name: file.name,
+        isFolder: false,
+      };
+      await this.db.collection('document').doc(hash).set(newDoc);
+    });
   }
   public async uploadFolder(ref: firebase.storage.Reference, filesDetail: FileListDetail) {
     const newRef = ref.child(filesDetail.folderName);
+    const hash = this.hash.findStringHash(filesDetail.folderName, ref.fullPath);
+    const fullPath = `${ref.fullPath}/${filesDetail.folderName}`;
+    this.auth.getUser().subscribe(async (user) => {
+      const newDoc: FileDataStore = {
+        path: fullPath === user.uid ? '""' : fullPath,
+        owner: user.uid,
+        bucket: ref.bucket,
+        name: filesDetail.folderName,
+        isFolder: true,
+      };
+      await this.db.collection('document').doc(hash).set(newDoc);
+    });
     for (const file of filesDetail.files) {
       await this.uploadFile(newRef, file);
     }
     for (const child of filesDetail.children) {
       await this.uploadFolder(newRef, child);
-    }
-  }
-  public async writeFileToDataBase(ref : firebase.storage.Reference, file: File){
-    const paths = ref.fullPath.split('/');
-    for(const path of paths){
-      firebase.firestore().collection('Files');
-    }
+    };
   }
   public processFiles(directoryFiles: Array<DirectoryFile>, level: number = 0): Array<FileListDetail> {
     const directoryMap: Map<string, Array<DirectoryFile>> = new Map();
