@@ -12,6 +12,7 @@
     "ngx"
   ],
   "repository": "https://github.com/BowWowStudio/LockedCabinet-ui",
+  "license": "MIT",
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
@@ -56,6 +57,7 @@
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "ts-helpers": "1.1.2",
+    "typescript": "^3.4.5",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
@@ -80,7 +82,6 @@
     "rxjs-tslint": "^0.1.7",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.4.5",
     "webpack": "^4.35.0"
   }
 }
