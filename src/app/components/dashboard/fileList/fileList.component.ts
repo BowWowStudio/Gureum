@@ -3,11 +3,8 @@ import * as firebase from 'firebase';
 import { AuthService } from '@shared/services/auth.service';
 import { FileItem } from './fileList.type';
 import { FileDataStore } from '../fileUpload/fileUpload.type';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { NestedTreeControl } from '@angular/cdk/tree';
 import { saveAs } from 'file-saver';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FolderComponent } from './folder/folder.component';
 
 interface HierArchy {
   name: string;
@@ -27,154 +24,94 @@ export class FileListComponent implements OnInit, OnDestroy {
   private user: firebase.User;
   public hierarchies: HierArchy[];
   public loading = true;
-  treeControl = new NestedTreeControl<FileItem>(node => node.children);
-  dataSource = new MatTreeNestedDataSource<FileItem>();
+  public datas: FileItem[];
+
   ngOnDestroy(): void { }
 
   ngOnInit() {
-    this.auth.getUser().subscribe(user => {
-      const storageRef = firebase.storage().ref().child(user.uid);
-      storageRef.listAll().then(res => {
-        res.prefixes.forEach(folderRef => {
-          console.log(folderRef);
-        });
-        res.items.forEach(itemRef => {
-          console.log(itemRef);
-        });
-      });
-    });
-
     this.db = firebase.firestore();
     const documentRef = this.db.collection('document');
-    this.auth.getUser().subscribe(user => {
+    this.auth.getUser().subscribe(async (user) => {
       if (user !== null) {
-        this.user = user;
-        documentRef.where('owner', '==', user.uid).get().then(snapshot => {
-          if (this.route.url.includes(this.folderUrl)) {
-            this.activatedRoute.paramMap.subscribe((paramMap) => {
-              const hash = paramMap.get('hash');
-              const fileItem = this.getFileItemFromHash(this.snapshotToFileNode(snapshot), hash, []);
-              this.dataSource.data = fileItem[0].children;
-              this.hierarchies = fileItem[1].slice(1);
+        let storageRef: firebase.storage.Reference;
+        let rootFileItem: FileItem;
+        if (this.route.url.includes(this.folderUrl)) {
+          this.activatedRoute.paramMap.subscribe((paramMap) => {
+            const hash = paramMap.get('hash');
+            documentRef.doc(hash).get().then(snapshot => {
+              const data = snapshot.data() as FileDataStore;
+              storageRef = firebase.storage().refFromURL(`gs://${data.bucket}/${data.path}`);
+              rootFileItem = {
+                name: data.name,
+                hash: snapshot.id,
+                isFolder: data.isFolder,
+                ref : storageRef,
+                children : [],
+              };
+              storageRef.listAll().then(listResult => {
+                this.processListResultToFileItem(listResult, rootFileItem).then(async result => {
+                  this.datas = result.children;
+                  this.hierarchies = await this.getHierarchy(user.uid, data.path);
+                  this.loading = false;
+                });
+              });
             });
-          } else {
-            this.dataSource.data = this.snapshotToFileNode(snapshot).children;
-          }
-          this.loading = false;
-        });
-      }
-    });
-  }
-  hasChild = (_: number, node: FileItem): boolean => {
-    return !!node.children && node.children.length > 0;
-  }
-
-  private snapshotToFileNode(
-    snapshot: firebase.firestore.QuerySnapshot
-  ): FileItem {
-    const frame = this.makeFileItemFromPath(snapshot);
-    this.mapHashToFolders(snapshot, frame);
-    snapshot.forEach(doc => {
-      const data = doc.data() as FileDataStore;
-      const fileItem = {
-        isFolder: data.isFolder,
-        name: data.name,
-        ref: firebase
-          .storage()
-          .refFromURL(`gs://${data.bucket}/${data.path}/${data.name}`),
-        hash: doc.id
-      };
-      const corresNode = this.getFileItemFromPath(frame, data.path.split('/'), true);
-      if (corresNode.hash !== doc.id) {
-        corresNode.children.push(fileItem);
-      }
-    });
-    return frame;
-  }
-  private getFileItemFromPath(
-    fileItem: FileItem,
-    paths: string[],
-    folder: boolean = false
-  ): FileItem | null {
-    if (fileItem.children !== null || fileItem.name === paths[0]) {
-      if (paths.length === 1) {
-        return fileItem;
-      } else if (paths.length === 2) {
-        return folder
-          ? fileItem.children.find(child => child.name === paths[1])
-          : fileItem;
-      } else {
-        const corresChild = fileItem.children.find(
-          child => child.name === paths[1]
-        );
-        return this.getFileItemFromPath(corresChild, paths.slice(1), folder);
-      }
-    } else {
-      return null;
-    }
-  }
-  private getFileItemFromHash(
-    fileItem: FileItem,
-    hash: string,
-    path: HierArchy[]
-  ): [FileItem | null, HierArchy[]] {
-    const newHierarchy = [...path, { hash: fileItem.hash, name: fileItem.name }];
-    if (fileItem.hash === hash) {
-      return [fileItem, newHierarchy];
-    } else {
-      for (const child of fileItem.children) {
-        return this.getFileItemFromHash(child, hash, newHierarchy);
-      }
-    }
-  }
-  private makeFileItemFromPath(
-    snapshot: firebase.firestore.QuerySnapshot
-  ): FileItem {
-    const pathSet: Set<string[]> = new Set();
-    const fileItemLevelMap: Map<number, Map<string, FileItem>> = new Map();
-    snapshot.forEach(doc => {
-      const data = doc.data() as FileDataStore;
-      pathSet.add(data.path.split('/'));
-    });
-    const root: FileItem = {
-      isFolder: true,
-      name: this.user.uid,
-      children: []
-    };
-    pathSet.forEach(value => {
-      for (let i = 0; i !== value.length; i += 1) {
-        const pathString = value.slice(0, i).join('/');
-        const result: FileItem = {
-          name: value[i],
-          isFolder: true,
-          children: []
-        };
-        if (!fileItemLevelMap.has(i)) {
-          const newMap = new Map();
-          newMap.set(pathString, result);
-          fileItemLevelMap.set(i, newMap);
+          });
+        } else {
+          storageRef = firebase.storage().ref(user.uid);
+          rootFileItem = {
+            name: user.uid,
+            isFolder: true,
+            ref : storageRef,
+            children : [],
+          };
+          storageRef.listAll().then(listResult => {
+            this.processListResultToFileItem(listResult, rootFileItem).then(result => {
+              this.datas = result.children;
+              this.loading = false;
+            });
+          });
         }
       }
     });
-    const levels = Array.from(fileItemLevelMap.keys()).sort();
-    levels.shift();
-    for (const level of levels) {
-      fileItemLevelMap.get(level).forEach((item, key) => {
-        const parentPath = [...key.split('/'), ...item.name.split('/')];
-        const corresFileItem = this.getFileItemFromPath(root, parentPath);
-        corresFileItem.children.push(item);
+  }
+  private async processListResultToFileItem(listResult: firebase.storage.ListResult, fileItem: FileItem): Promise<FileItem> {
+    for (const prefix of listResult.prefixes) {
+      const listItem = await prefix.listAll();
+      const hashResult = await this.db.collection('document').where('isFolder', '==', true).where('path', '==', prefix.fullPath).get();
+      const hash = hashResult.docs[0].id;
+      const newFileItem: FileItem = {
+        name: prefix.name,
+        isFolder: true,
+        children: [],
+        ref : prefix,
+        hash : hash,
+      };
+      fileItem.children.push(await this.processListResultToFileItem(listItem, newFileItem));
+    }
+    for (const item of listResult.items) {
+      console.log(item.getMetadata());
+      fileItem.children.push({
+        isFolder: false,
+        name: item.name,
+        ref: item,
       });
     }
-    return root;
+    return fileItem;
   }
-  private mapHashToFolders(snapshot: firebase.firestore.QuerySnapshot, root: FileItem) {
-    const folders = snapshot.docs.filter(doc => {
-      const data = doc.data() as FileDataStore;
-      return data.isFolder;
-    });
-    folders.forEach(folder => {
-      this.getFileItemFromPath(root, (folder.data() as FileDataStore).path.split('/'), true).hash = folder.id;
-    });
+  private async getHierarchy(uid: string, fullPath: string): Promise<HierArchy[]> {
+    const hierarchy: HierArchy[] = [];
+    const documentRef = this.db.collection('document');
+    const paths = fullPath.split('/');
+    for (let i = 1; i !== paths.length; i += 1) {
+      const newFullPath = paths.slice(0, i + 1).join('/');
+      const result = (await documentRef.where('path', '==', newFullPath).get()).docs[0];
+      hierarchy.push({
+        hash: result.id,
+        name: paths[i],
+      });
+    }
+    return hierarchy;
   }
   public download(ref: firebase.storage.Reference) {
     ref.getDownloadURL().then(url => {
