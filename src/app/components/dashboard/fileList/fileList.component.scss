@@ -1,3 +1,6 @@
+%width100 {
+  width:100%;
+}
 .example-tree-invisible {
     display: none;
 }
@@ -14,10 +17,18 @@
 }
 
 .width100Percent{
-  width:100%;
+  @extend %width100;
 }
-
+:host .mat-card-header-text{
+  @extend %width100;
+}
 :host{
   width:80%;
   height: 80%;
+}
+.example-spacer {
+  flex: 1 1 auto;
+}
+.selected {
+  background-color: bisque;
 }

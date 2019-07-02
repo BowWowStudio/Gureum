@@ -1,40 +1,36 @@
 <ng-container *ngIf="loading === true; else loaded">
-    <div class="width100Percent height100Percent">
-        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-    </div>
+  <div class="width100Percent height100Percent">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
 </ng-container>
 <ng-template #loaded>
-<mat-card class="width100Percent height100Percent">
-    <mat-card-header>
-      <mat-card-title>
-        <p (click)="openFolder(undefined)">My Drive</p>
-      </mat-card-title>
-      <mat-card-subtitle fxLayout="row">
-          <ng-container *ngFor="let hierarchy of hierarchies ;  last as isLast">
-              <p (click)="openFolder(hierarchy.hash)"> {{hierarchy.name}} </p>
-              <mat-icon *ngIf="!isLast">chevron_right</mat-icon>
-          </ng-container>
-      </mat-card-subtitle>
+  <mat-card class="width100Percent height100Percent">
+    <mat-card-header class="width100Percent" fxLayout="row" fxLayoutAlign="space-between center">
+        <app-toolbar [Hierarchy]="hierarchies" (folderClick)="setIsLoading(true)"></app-toolbar>
+        <span class="example-spacer"></span>
+        <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
     </mat-card-header>
     <mat-card-content>
-      <mat-list>
-          <mat-list-item *ngFor="let data of datas">
-            <ng-container *ngIf="data.isFolder; else fileTemplate">
-                <button mat-icon-button (click)="openFolder(data.hash)">
-                  <mat-icon class="mat-icon-rtl-mirror">
-                    folder
-                  </mat-icon>
-                </button>
-                <p>{{ data.name }}</p>
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 width100Percent">
+        <ng-container *ngFor="let column of displayedColumns" matColumnDef={{column}}>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnCellName.get(column)}} </th>
+          <td mat-cell *matCellDef="let element" [ngClass]="{'selected': selectedRow.has(element)}" (click)="toggleSelect(element)">
+            <ng-container *ngIf="column === 'name' ; else notNameColumnTemplate">
+              <ng-container *ngIf="element.isFolder; else fileTemplate">
+                <mat-icon (click)="openFolder(element.hash)">folder</mat-icon>
+              </ng-container>
+              <ng-template #fileTemplate>
+                <mat-icon>insert_drive_file</mat-icon>
+              </ng-template>
             </ng-container>
-            <ng-template #fileTemplate>
-                <button mat-icon-button disabled></button>
-                {{ data.name }}
-                <button mat-icon-button (click)="download(data.ref)"><mat-icon>cloud_download</mat-icon></button>
+            <ng-template #notNameColumnTemplate>
             </ng-template>
-          </mat-list-item>
-      </mat-list>
+            {{element[column]}}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
     </mat-card-content>
   </mat-card>
 </ng-template>
-
