@@ -7,7 +7,8 @@ import { saveAs } from 'file-saver';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-
+import * as JSZip from 'jszip';
+import { resolve } from 'q';
 
 
 @Component({
@@ -19,12 +20,13 @@ export class FileListComponent implements OnInit, OnDestroy {
   constructor(private auth: AuthService, public route: Router, private activatedRoute: ActivatedRoute) { }
   private folderUrl = 'folder';
   private db: firebase.firestore.Firestore;
+  private zipFile: JSZip = new JSZip();
   public fileLists: FileItem[];
   public hierarchies: HierArchy[] = [{hash: undefined, name: 'My Drive'}];
   public loading = true;
   public datas: FileItem[];
   public displayedColumns: string[] = ['name', 'owner', 'lastModified', 'size'];
-  public columnCellName: Map<string, string> = new Map([['name', 'Name'], ['owner', 'Owner'], ['lastModified', 'last Modified'], ['size', 'Size']]);
+  public columnCellName: Map<string, string> = new Map([['name', 'Name'], ['owner', 'Owner'], ['lastModified', 'Last Modified'], ['size', 'Size']]);
   public dataSource = new MatTableDataSource();
   public selectedRow: Set<FileItem> = new Set();
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -41,6 +43,7 @@ export class FileListComponent implements OnInit, OnDestroy {
         let storageRef: firebase.storage.Reference;
         if (this.route.url.includes(this.folderUrl)) {
           this.activatedRoute.paramMap.subscribe(async (paramMap) => {
+            this.loading = true;
             const hash = paramMap.get('hash');
             const snapshot = await documentRef.doc(hash).get();
             const data = snapshot.data() as FileDataStore;
@@ -81,6 +84,7 @@ export class FileListComponent implements OnInit, OnDestroy {
         name: item.name,
         owner : 'Me',
         size : metaData.size,
+        ref: item,
       });
     }
     return returnVal;
@@ -101,16 +105,20 @@ export class FileListComponent implements OnInit, OnDestroy {
     });
     return hierarchy;
   }
-  public download(ref: firebase.storage.Reference) {
-    ref.getDownloadURL().then(url => {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = async () => {
-        const blob = xhr.response;
-        saveAs(blob, ref.name);
+  public download(blob: Blob, name: string) {
+    saveAs(blob, name);
+  }
+  public async getBlobFromRef(ref: firebase.storage.Reference): Promise<Blob> {
+    const url = await ref.getDownloadURL();
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.open('GET', url);
+    xhr.send();
+    return new Promise((resolve) => {
+      xhr.onload = async() => {
+        const blob: Blob = xhr.response;
+        resolve(blob);
       };
-      xhr.open('GET', url);
-      xhr.send();
     });
   }
   public setIsLoading(loading: boolean) {
@@ -122,12 +130,19 @@ export class FileListComponent implements OnInit, OnDestroy {
     } else {
       this.route.navigate(['/dashboard', 'folder', hash]);
     }
-  }
-  public toggleSelect(element:FileItem){
-    if(this.selectedRow.has(element)){
+}
+  public toggleSelect(element: FileItem) {
+    if (this.selectedRow.has(element)) {
       this.selectedRow.delete(element);
-    }else{
+    } else {
       this.selectedRow.add(element);
     }
+  }
+  public async downloadSelected() {
+    for (const file of this.selectedRow) {
+      this.zipFile.file<'blob'>(file.ref.fullPath, await this.getBlobFromRef(file.ref));
+    }
+    const content: Blob = await this.zipFile.generateAsync({type: 'blob'});
+    this.download(content, 'files');
   }
 }

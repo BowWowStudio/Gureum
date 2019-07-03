@@ -24,7 +24,10 @@
 			],
 			"@shared": [
 				"src/app/shared"
-			]
+      ],
+      "jszip": [
+        "node_modules/jszip/dist/jszip.min.js"
+      ]
     }
   },
   "angularCompilerOptions": {

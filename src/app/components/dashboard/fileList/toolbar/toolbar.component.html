@@ -1,4 +1,4 @@
 <ng-container *ngFor="let hierarchy of hierarchies;  last as isLast">
-    <p (click)="openFolder(hierarchy.hash)"> {{hierarchy.name}} </p>
+    <button mat-button (click)="openFolder(hierarchy.hash)"> {{hierarchy.name}} </button>
     <mat-icon *ngIf="!isLast">chevron_right</mat-icon>
 </ng-container>
