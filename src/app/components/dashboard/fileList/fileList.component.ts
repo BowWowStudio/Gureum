@@ -9,6 +9,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import * as JSZip from 'jszip';
 import { resolve } from 'q';
+import { MatDialog } from '@angular/material';
+import { NewFolderDialogComponent } from './newFolderDialog/newFolderDialog.component';
+import { MenuClickService } from '@shared/services';
+import { Menu } from '@shared/interfaces/app.type';
 
 
 @Component({
@@ -17,7 +21,7 @@ import { resolve } from 'q';
   styleUrls: ['./fileList.component.scss']
 })
 export class FileListComponent implements OnInit, OnDestroy {
-  constructor(private auth: AuthService, public route: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private auth: AuthService, public route: Router, private activatedRoute: ActivatedRoute, public dialog: MatDialog, private menuService: MenuClickService) { }
   private folderUrl = 'folder';
   private db: firebase.firestore.Firestore;
   private zipFile: JSZip = new JSZip();
@@ -38,6 +42,11 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
     this.db = firebase.firestore();
     const documentRef = this.db.collection('document');
+    this.menuService.getMenuObservable().subscribe(menu=>{
+      if(menu === Menu.NEWFOLDER){
+        this.createNewFolder();
+      }
+    })
     this.auth.getUser().subscribe(async (user) => {
       if (user !== null) {
         let storageRef: firebase.storage.Reference;
@@ -131,7 +140,10 @@ export class FileListComponent implements OnInit, OnDestroy {
       this.route.navigate(['/dashboard', 'folder', hash]);
     }
 }
-  public toggleSelect(element: FileItem) {
+  public toggleSelect(element: FileItem, event: KeyboardEvent) {
+    if (!event.ctrlKey) {
+      this.selectedRow.clear();
+    }
     if (this.selectedRow.has(element)) {
       this.selectedRow.delete(element);
     } else {
@@ -139,10 +151,25 @@ export class FileListComponent implements OnInit, OnDestroy {
     }
   }
   public async downloadSelected() {
-    for (const file of this.selectedRow) {
-      this.zipFile.file<'blob'>(file.ref.fullPath, await this.getBlobFromRef(file.ref));
+    if (this.selectedRow.size === 1) {
+      const file = this.selectedRow.values().next().value;
+      this.download(await this.getBlobFromRef(file.ref), file.ref.name);
+    } else {
+      for (const file of this.selectedRow) {
+        this.zipFile.file<'blob'>(file.ref.fullPath.split('/').slice(1).join('/'), await this.getBlobFromRef(file.ref));
+      }
+      const content: Blob = await this.zipFile.generateAsync({type: 'blob'});
+      this.download(content, 'files');
     }
-    const content: Blob = await this.zipFile.generateAsync({type: 'blob'});
-    this.download(content, 'files');
+  }
+  public async createNewFolder(){
+    const dialogRef = this.dialog.open(NewFolderDialogComponent, {
+      width: '250px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+    });
   }
 }

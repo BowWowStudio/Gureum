@@ -2,7 +2,8 @@ export enum Menu {
     UPLOAD,
     MAIN,
     SHARE,
-    RECENT
+    RECENT,
+    NEWFOLDER,
 }
 export interface MenuDetail {
     name: string;

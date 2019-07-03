@@ -8,7 +8,7 @@
     <div fxLayout="column" fxFlex=100>
     <mat-toolbar color="primary" fxFlex="64px">
         <mat-toolbar-row>
-            <button mat-icon-button (click)="sidenav.toggle()">
+            <button mat-icon-button (click)="sidenav.toggle();">
                 <mat-icon class="mat-18">menu</mat-icon>
             </button>
             <span>Gureum</span>
@@ -34,6 +34,15 @@
     </mat-toolbar>
     <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
         <mat-sidenav #sidenav mode="side" fxFlex="150px">
+            <mat-menu #appMenu="matMenu" class="uploadMenu">
+                <button mat-menu-item (click)="menuClicked(menuEnum.NEWFOLDER)">New Folder</button>
+                <mat-divider></mat-divider>
+                <button mat-menu-item>Upload File</button>
+                <button mat-menu-item>Upload Folder</button>
+            </mat-menu>
+            <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
+                Upload
+            </button>
             <mat-list role="list"  >
                 <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
                     <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
