@@ -1,6 +1,9 @@
 <mat-card>
-    <mat-card-header fxLayout="row" fxLayoutAlign="center center" id="titleContainer">
+    <mat-card-header fxLayout="column" fxLayoutAlign="center center" id="titleContainer">
         <mat-card-title class="title" id="title">Gureum</mat-card-title>
+        <mat-card-subtitle class="logo" fxLayout="row" fxLayoutAlign="center center" class="width100Percent">
+            <img src="../../../../assets/logo.svg" fxFlex="50%">
+        </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content fxLayout="row" fxLayoutAlign="center center">
         <form [formGroup]="form" (ngSubmit)="login()" fxLayout="column" fxLayoutAlign="center center" fxFlex="300px">  

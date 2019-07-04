@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material';
 import { NewFolderDialogComponent } from './newFolderDialog/newFolderDialog.component';
 import { MenuClickService } from '@shared/services';
 import { Menu } from '@shared/interfaces/app.type';
-
+import { CryptoService } from '@shared/services/Crypto.service';
 
 @Component({
   selector: "app-fileList",
@@ -21,67 +21,90 @@ import { Menu } from '@shared/interfaces/app.type';
   styleUrls: ['./fileList.component.scss']
 })
 export class FileListComponent implements OnInit, OnDestroy {
-  constructor(private auth: AuthService, public route: Router, private activatedRoute: ActivatedRoute, public dialog: MatDialog, private menuService: MenuClickService) { }
+  constructor(
+    private auth: AuthService,
+    public route: Router,
+    private activatedRoute: ActivatedRoute,
+    public dialog: MatDialog,
+    private menuService: MenuClickService,
+    private hash: CryptoService
+  ) {}
   private folderUrl = 'folder';
   private db: firebase.firestore.Firestore;
   private zipFile: JSZip = new JSZip();
   public fileLists: FileItem[];
-  public hierarchies: HierArchy[] = [{hash: undefined, name: 'My Drive'}];
+  public hierarchies: HierArchy[] = [{ hash: undefined, name: 'My Drive' }];
   public loading = true;
   public datas: FileItem[];
   public displayedColumns: string[] = ['name', 'owner', 'lastModified', 'size'];
-  public columnCellName: Map<string, string> = new Map([['name', 'Name'], ['owner', 'Owner'], ['lastModified', 'Last Modified'], ['size', 'Size']]);
+  public columnCellName: Map<string, string> = new Map([
+    ['name', 'Name'],
+    ['owner', 'Owner'],
+    ['lastModified', 'Last Modified'],
+    ['size', 'Size']
+  ]);
   public dataSource = new MatTableDataSource();
   public selectedRow: Set<FileItem> = new Set();
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {}
 
   ngOnInit() {
     this.dataSource.sort = this.sort;
     this.db = firebase.firestore();
     const documentRef = this.db.collection('document');
-    this.menuService.getMenuObservable().subscribe(menu=>{
-      if(menu === Menu.NEWFOLDER){
+    this.menuService.getMenuObservable().subscribe(menu => {
+      if (menu === Menu.NEWFOLDER) {
         this.createNewFolder();
       }
-    })
-    this.auth.getUser().subscribe(async (user) => {
+    });
+    this.auth.getUser().subscribe(async user => {
       if (user !== null) {
         let storageRef: firebase.storage.Reference;
         if (this.route.url.includes(this.folderUrl)) {
-          this.activatedRoute.paramMap.subscribe(async (paramMap) => {
+          this.activatedRoute.paramMap.subscribe(async paramMap => {
             this.loading = true;
             const hash = paramMap.get('hash');
             const snapshot = await documentRef.doc(hash).get();
             const data = snapshot.data() as FileDataStore;
-            storageRef = firebase.storage().refFromURL(`gs://${data.bucket}/${data.path}`);
+            storageRef = firebase
+              .storage()
+              .refFromURL(`gs://${data.bucket}/${data.path}`);
             const listResult = await storageRef.listAll();
-            this.dataSource.data = await this.processListResultToFileItem(listResult);
+            this.dataSource.data = await this.processListResultToFileItem(
+              listResult
+            );
             this.hierarchies = await this.getHierarchy(storageRef);
             this.loading = false;
           });
         } else {
           storageRef = firebase.storage().ref(user.uid);
           const listResult = await storageRef.listAll();
-          this.dataSource.data = await this.processListResultToFileItem(listResult);
+          this.dataSource.data = await this.processListResultToFileItem(
+            listResult
+          );
           this.loading = false;
         }
       }
     });
   }
-  private async processListResultToFileItem(listResult: firebase.storage.ListResult): Promise<FileItem[]> {
+  private async processListResultToFileItem(
+    listResult: firebase.storage.ListResult
+  ): Promise<FileItem[]> {
     const returnVal: FileItem[] = [];
     for (const prefix of listResult.prefixes) {
-      const hashResult = await this.db.collection('document').where('isFolder', '==', true).where('path', '==', prefix.fullPath).get();
+      const hashResult = await this.db
+        .collection('document')
+        .where('isFolder', '==', true)
+        .where('path', '==', prefix.fullPath)
+        .get();
       const hash = hashResult.docs[0].id;
       const newFileItem: FileItem = {
         name: prefix.name,
         isFolder: true,
-        ref : prefix,
-        hash : hash,
-        owner : 'Me',
+        ref: prefix,
+        hash: hash,
+        owner: 'Me'
       };
       returnVal.push(newFileItem);
     }
@@ -91,26 +114,30 @@ export class FileListComponent implements OnInit, OnDestroy {
         isFolder: false,
         lastModified: metaData.updated,
         name: item.name,
-        owner : 'Me',
-        size : metaData.size,
-        ref: item,
+        owner: 'Me',
+        size: metaData.size,
+        ref: item
       });
     }
     return returnVal;
   }
-  private async getHierarchy(ref: firebase.storage.Reference): Promise<HierArchy[]> {
+  private async getHierarchy(
+    ref: firebase.storage.Reference
+  ): Promise<HierArchy[]> {
     let currentRef = ref;
     const hierarchy: HierArchy[] = [];
     const documentRef = this.db.collection('document');
     while (currentRef.parent.parent !== null) {
       hierarchy.unshift({
-        hash: (await documentRef.where('path', '==', currentRef.fullPath).get()).docs[0].id,
-        name : currentRef.name,
+        hash: (await documentRef.where('path', '==', currentRef.fullPath).get())
+          .docs[0].id,
+        name: currentRef.name
       });
       currentRef = currentRef.parent;
     }
     hierarchy.unshift({
-      hash: undefined, name: 'My Drive'
+      hash: undefined,
+      name: 'My Drive'
     });
     return hierarchy;
   }
@@ -123,8 +150,8 @@ export class FileListComponent implements OnInit, OnDestroy {
     xhr.responseType = 'blob';
     xhr.open('GET', url);
     xhr.send();
-    return new Promise((resolve) => {
-      xhr.onload = async() => {
+    return new Promise(resolve => {
+      xhr.onload = async () => {
         const blob: Blob = xhr.response;
         resolve(blob);
       };
@@ -139,7 +166,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     } else {
       this.route.navigate(['/dashboard', 'folder', hash]);
     }
-}
+  }
   public toggleSelect(element: FileItem, event: KeyboardEvent) {
     if (!event.ctrlKey) {
       this.selectedRow.clear();
@@ -156,20 +183,70 @@ export class FileListComponent implements OnInit, OnDestroy {
       this.download(await this.getBlobFromRef(file.ref), file.ref.name);
     } else {
       for (const file of this.selectedRow) {
-        this.zipFile.file<'blob'>(file.ref.fullPath.split('/').slice(1).join('/'), await this.getBlobFromRef(file.ref));
+        this.zipFile.file<'blob'>(
+          file.ref.fullPath
+            .split('/')
+            .slice(1)
+            .join('/'),
+          await this.getBlobFromRef(file.ref)
+        );
       }
-      const content: Blob = await this.zipFile.generateAsync({type: 'blob'});
+      const content: Blob = await this.zipFile.generateAsync({ type: 'blob' });
       this.download(content, 'files');
     }
   }
-  public async createNewFolder(){
+  public async createNewFolder() {
     const dialogRef = this.dialog.open(NewFolderDialogComponent, {
       width: '250px',
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+    const documentRef = this.db.collection('document');
+    dialogRef.afterClosed().subscribe(folderName => {
+      this.auth.getUser().subscribe(async user => {
+        if (user !== null) {
+          let storageRef: firebase.storage.Reference;
+          if (this.route.url.includes(this.folderUrl)) {
+            this.activatedRoute.paramMap.subscribe(async paramMap => {
+              this.loading = true;
+              const hash = paramMap.get('hash');
+              const snapshot = await documentRef.doc(hash).get();
+              const data = snapshot.data() as FileDataStore;
+              const newFolder: FileDataStore = {
+                bucket: data.bucket,
+                isFolder: true,
+                name: folderName,
+                owner: user.uid,
+                path: `${data.path}/${folderName}`
+              };
+              const newFolderHash = this.hash.findStringHash(newFolder.name, newFolder.path);
+              storageRef = firebase
+                .storage()
+                .refFromURL(`gs://${data.bucket}/${data.path}`);
+              const garbageData: Blob = new Blob();
+              const uplaodStatus = storageRef.child(`${folderName}/garbage`).put(garbageData);
+              uplaodStatus.then(async snapshot => {
+                // await storageRef.child(`${folderName}/garbage`).delete();
+                documentRef.doc(newFolderHash).set(newFolder);
+                const listResult = await storageRef.listAll();
+                this.dataSource.data = await this.processListResultToFileItem(
+                  listResult
+                );
+                this.hierarchies = await this.getHierarchy(storageRef);
+                this.loading = false;
+              });
+
+            });
+          } else {
+            storageRef = firebase.storage().ref(user.uid);
+            const listResult = await storageRef.listAll();
+            this.dataSource.data = await this.processListResultToFileItem(
+              listResult
+            );
+            this.loading = false;
+          }
+        }
+      });
     });
   }
 }
