@@ -2,9 +2,12 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, } from '@a
 import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
 import { Menu, MenuDetail } from '@shared/interfaces/app.type';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@shared/services/auth.service';
 import { MenuClickService } from '@shared/services/menuClick.service';
+import { FileUploadService } from '@shared/services/fileUpload.service';
+import { MatDialog } from '@angular/material';
+import { NewFolderDialogComponent } from './components/dashboard/fileList/newFolderDialog/newFolderDialog.component';
 
 @Component({
   selector: "app-root",
@@ -20,19 +23,15 @@ export class AppComponent implements OnInit {
       this.updateButtonCoordinate();
     }
   }
-
   private auth = ['/login', '/register'];
   public sideNavOpen = false;
   public menuEnum = Menu;
   public menuDetails: MenuDetail[];
   public uploadButtonCoordinate: [number, number];
-  constructor(private route: Router, private authService: AuthService, private menuService:MenuClickService ) {
-    this.menuDetails = [{
-      name: 'Upload',
-      isHover: false,
-      url: ['dashboard', 'upload'],
-      corresMenu: Menu.UPLOAD,
-    }, {
+  constructor(private route: Router, private authService: AuthService,
+     private menuService: MenuClickService, private fileUploadService: FileUploadService,
+     public dialog: MatDialog, private activatedRoute: ActivatedRoute ) {
+    this.menuDetails = [ {
       name: 'My Drive',
       isHover: false,
       url: ['dashboard', 'main'],
@@ -83,7 +82,22 @@ export class AppComponent implements OnInit {
         'left': this.uploadButtonCoordinate[0],
       };
   }
-  public menuClicked(menu :Menu){
-    this.menuService.menuClicked(menu);
+  public newFolder() {
+    const folderUrl = 'folder';
+    const dialogRef = this.dialog.open(NewFolderDialogComponent, {
+      width: '250px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(async folderName => {
+      console.log(folderName);
+      if (this.route.url.includes(folderUrl)) {
+        this.activatedRoute.paramMap.subscribe(async paramMap => {
+          const hash = paramMap.get('hash');
+          await this.fileUploadService.newFolder(folderName, hash);
+        });
+      } else {
+        await this.fileUploadService.newFolder(folderName);
+      }
+    });
   }
 }

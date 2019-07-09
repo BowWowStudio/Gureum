@@ -32,6 +32,7 @@ import { firebaseKeys } from './firebase.config';
 import { DashboardModule } from './components/dashboard/dashboard.module';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CryptoService } from '@shared/services/Crypto.service';
 
 // Pages
 
@@ -66,6 +67,7 @@ import { CommonModule } from '@angular/common';
     AuthService,
     WindowService,
     AngularFireAuth,
+    CryptoService,
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

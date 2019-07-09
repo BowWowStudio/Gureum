@@ -4,8 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './components/auth/auth-component/auth.component';
 import { SignupComponentComponent } from './components/auth/signup-component/signup-component.component';
 import { AuthGuardService } from '@shared/services/auth-guard.service';
-import { DashboardModule } from './components/dashboard/dashboard.module';
-import { FileUploadComponent } from './components/dashboard/fileUpload/fileUpload.component';
 import { ShareComponent } from './components/dashboard/share/share.component';
 import { LoginGuardService } from '@shared/services/login-guard.service';
 import { ProfileComponent } from './components/dashboard/profile/profile.component';
@@ -24,7 +22,6 @@ const appRoutes: Routes = [
   { path: 'dashboard',  canActivateChild:[AuthGuardService], children: [
     {path: '', redirectTo : 'main', pathMatch : 'full'},
     {path: 'folder/:hash', component: FileListComponent},
-    {path: 'upload', component:FileUploadComponent},
     {path: 'main', component: FileListComponent },
     {path: 'shared', component: ShareComponent},
     {path: 'profile', component: ProfileComponent},

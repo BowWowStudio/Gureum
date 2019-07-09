@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import * as firebase from 'firebase';
 import { AuthService } from '@shared/services/auth.service';
 import { FileItem, MetaData, HierArchy } from './fileList.type';
-import { FileDataStore } from '../fileUpload/fileUpload.type';
 import { saveAs } from 'file-saver';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +13,7 @@ import { NewFolderDialogComponent } from './newFolderDialog/newFolderDialog.comp
 import { MenuClickService } from '@shared/services';
 import { Menu } from '@shared/interfaces/app.type';
 import { CryptoService } from '@shared/services/Crypto.service';
+import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
 
 @Component({
   selector: "app-fileList",
@@ -53,12 +53,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
     this.db = firebase.firestore();
     const documentRef = this.db.collection('document');
-    this.menuService.getMenuObservable().subscribe(menu => {
-      if (menu === Menu.NEWFOLDER) {
-        this.createNewFolder();
-      }
-    });
-    this.auth.getUser().subscribe(async user => {
+    this.auth.getUserObservable().subscribe(async user => {
       if (user !== null) {
         let storageRef: firebase.storage.Reference;
         if (this.route.url.includes(this.folderUrl)) {
@@ -194,59 +189,5 @@ export class FileListComponent implements OnInit, OnDestroy {
       const content: Blob = await this.zipFile.generateAsync({ type: 'blob' });
       this.download(content, 'files');
     }
-  }
-  public async createNewFolder() {
-    const dialogRef = this.dialog.open(NewFolderDialogComponent, {
-      width: '250px',
-      data: {}
-    });
-
-    const documentRef = this.db.collection('document');
-    dialogRef.afterClosed().subscribe(folderName => {
-      this.auth.getUser().subscribe(async user => {
-        if (user !== null) {
-          let storageRef: firebase.storage.Reference;
-          if (this.route.url.includes(this.folderUrl)) {
-            this.activatedRoute.paramMap.subscribe(async paramMap => {
-              this.loading = true;
-              const hash = paramMap.get('hash');
-              const snapshot = await documentRef.doc(hash).get();
-              const data = snapshot.data() as FileDataStore;
-              const newFolder: FileDataStore = {
-                bucket: data.bucket,
-                isFolder: true,
-                name: folderName,
-                owner: user.uid,
-                path: `${data.path}/${folderName}`
-              };
-              const newFolderHash = this.hash.findStringHash(newFolder.name, newFolder.path);
-              storageRef = firebase
-                .storage()
-                .refFromURL(`gs://${data.bucket}/${data.path}`);
-              const garbageData: Blob = new Blob();
-              const uplaodStatus = storageRef.child(`${folderName}/garbage`).put(garbageData);
-              uplaodStatus.then(async snapshot => {
-                // await storageRef.child(`${folderName}/garbage`).delete();
-                documentRef.doc(newFolderHash).set(newFolder);
-                const listResult = await storageRef.listAll();
-                this.dataSource.data = await this.processListResultToFileItem(
-                  listResult
-                );
-                this.hierarchies = await this.getHierarchy(storageRef);
-                this.loading = false;
-              });
-
-            });
-          } else {
-            storageRef = firebase.storage().ref(user.uid);
-            const listResult = await storageRef.listAll();
-            this.dataSource.data = await this.processListResultToFileItem(
-              listResult
-            );
-            this.loading = false;
-          }
-        }
-      });
-    });
   }
 }

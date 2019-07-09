@@ -13,6 +13,11 @@ export class AuthService {
     private router: Router,
     private auth: AngularFireAuth) {
       this.db = firebase.firestore();
+      this.auth.authState.subscribe(user => {
+        if (user !== null) {
+          this.user = user;
+        }
+      });
     }
 
     public async signUp(email: string, password: string, name: string): Promise<boolean> {
@@ -56,11 +61,14 @@ export class AuthService {
       );
     return this.token;
   }
-  public getUser(): Observable<firebase.User>{
+  public getUserObservable(): Observable<firebase.User> {
     return this.auth.authState;
   }
+  public getUser(): firebase.User {
+    return this.user;
+  }
   public isAuthenticated(): string {
-    if (firebase.auth().currentUser){
+    if (firebase.auth().currentUser) {
       return 'true';
     }
     return sessionStorage.getItem('session-alive');

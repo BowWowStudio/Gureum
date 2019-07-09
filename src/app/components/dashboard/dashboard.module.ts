@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatProgressBarModule, MatCardModule, MatIconModule, MatListModule, MatTreeModule, MatProgressSpinnerModule, MatTableModule, MatMenuModule, MatDialogModule } from '@angular/material';
-import { FileUploadComponent } from './fileUpload/fileUpload.component';
 import { ShareComponent } from './share/share.component';
 import { ProfileComponent } from './profile/profile.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -27,14 +26,14 @@ import { NewFolderDialogComponent } from './fileList/newFolderDialog/newFolderDi
     MatMenuModule,
     MatDialogModule,
   ],
-  declarations: [FileUploadComponent, ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent],
+  declarations: [ ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent],
   providers: [
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
   exports: [
-    FileUploadComponent, ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent, 
+     ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent, 
   ],
   bootstrap: [
     NewFolderDialogComponent
