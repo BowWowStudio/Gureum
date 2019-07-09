@@ -14,6 +14,7 @@ import { MenuClickService } from '@shared/services';
 import { Menu } from '@shared/interfaces/app.type';
 import { CryptoService } from '@shared/services/Crypto.service';
 import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
+import { FileListService } from '@shared/services/fileList.service';
 
 @Component({
   selector: "app-fileList",
@@ -27,8 +28,16 @@ export class FileListComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     public dialog: MatDialog,
     private menuService: MenuClickService,
-    private hash: CryptoService
-  ) {}
+    private hash: CryptoService,
+    private fileListService : FileListService,
+  ) {
+    auth.getUserObservable().subscribe(user=>{
+      fileListService.fileDataStoreToFileListDetail(user.uid).then(a=>{
+        console.log(a);
+        this.dataSource.data = a;
+      });
+    });
+  }
   private folderUrl = 'folder';
   private db: firebase.firestore.Firestore;
   private zipFile: JSZip = new JSZip();
@@ -36,12 +45,12 @@ export class FileListComponent implements OnInit, OnDestroy {
   public hierarchies: HierArchy[] = [{ hash: undefined, name: 'My Drive' }];
   public loading = true;
   public datas: FileItem[];
-  public displayedColumns: string[] = ['name', 'owner', 'lastModified', 'size'];
+  public displayedColumns: string[] = ['name', 'owner'];
   public columnCellName: Map<string, string> = new Map([
     ['name', 'Name'],
     ['owner', 'Owner'],
-    ['lastModified', 'Last Modified'],
-    ['size', 'Size']
+    // ['lastModified', 'Last Modified'],
+    // ['size', 'Size']
   ]);
   public dataSource = new MatTableDataSource();
   public selectedRow: Set<FileItem> = new Set();

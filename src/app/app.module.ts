@@ -33,6 +33,7 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CryptoService } from '@shared/services/Crypto.service';
+import { FileListService } from '@shared/services/fileList.service';
 
 // Pages
 
@@ -68,6 +69,7 @@ import { CryptoService } from '@shared/services/Crypto.service';
     WindowService,
     AngularFireAuth,
     CryptoService,
+    FileListService,
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

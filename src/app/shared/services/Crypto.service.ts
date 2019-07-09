@@ -21,6 +21,6 @@ constructor() { }
     return hash.sha256().update(string).update(salt).digest('hex');
   }
   public findFolderHash(folderName : string, ownerId : string, date : Date){
-    return hash.sha256().update(folderName).update(ownerId).update(date).digest('hex');
+    return hash.sha256().update(folderName).update(ownerId).update(date.toUTCString()).digest('hex');
   }
 }

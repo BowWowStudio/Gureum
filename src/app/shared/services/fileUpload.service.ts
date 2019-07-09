@@ -17,16 +17,16 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
     this.ref = firebase.storage().ref(user.uid);
   });
 }
-  public async newFolder(name, parentFolderDocId = null) : Promise<void>{
+  public async newFolder(name, parentFolderDocId = null): Promise<void> {
     const uid = this.authService.getUser().uid;
     const docId = this.crypto.findFolderHash(name, uid, new Date());
     let newFolder: FileDataStore;
     const documentRef = this.db.collection('document');
     if (parentFolderDocId !== null) {
       // find the corresponding doc and find the folder path
-      let path = '';
+      let fileDataStore: FileDataStore;
       try {
-        path = ((await documentRef.doc(parentFolderDocId).get()).data() as FileDataStore).path;
+        fileDataStore = ((await documentRef.doc(parentFolderDocId).get()).data() as FileDataStore);
       } catch (err) {
         throw Error('Parent path does not exist');
       }
@@ -35,7 +35,9 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
         isFolder : true,
         name : name,
         owner : uid,
-        path : `${path}/${name}`,
+        path : `${fileDataStore.path}/${name}`,
+        parent : parentFolderDocId,
+        hash: docId,
       };
     } else {
       // path is equal to the uid
@@ -44,7 +46,9 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
         isFolder : true,
         name : name,
         owner : uid,
-        path : uid
+        path : uid,
+        parent: null,
+        hash: docId,
       };
     }
     documentRef.doc(docId).set(newFolder);

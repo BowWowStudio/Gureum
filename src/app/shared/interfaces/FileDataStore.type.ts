@@ -4,5 +4,7 @@ export interface FileDataStore {
     bucket:string;
     name:string;
     isFolder:boolean;
+    parent? : string;
+    hash? : string;
   }
   
