@@ -6,59 +6,59 @@
 </ng-container>
 <ng-template #main>
     <div fxLayout="column" fxFlex=100>
-    <mat-toolbar color="primary" fxFlex="64px">
-        <mat-toolbar-row>
-            <button mat-icon-button (click)="sidenav.toggle();">
-                <mat-icon class="mat-18">menu</mat-icon>
-            </button>
-            <span>Gureum</span>
-            <span class="example-spacer"></span>
-            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                  <mat-menu #menu="matMenu">
-                    <button mat-menu-item (click)="profilePage()">
-                      <mat-icon>account_circle</mat-icon>
-                      <span>Profile</span>
+        <mat-toolbar color="primary" fxFlex="64px" (contextmenu)="onRightClick($event)">
+            <mat-toolbar-row>
+                <button mat-icon-button (click)="sidenav.toggle();">
+                    <mat-icon class="mat-18">menu</mat-icon>
+                </button>
+                <span>Gureum</span>
+                <span class="example-spacer"></span>
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                        <mat-icon>more_vert</mat-icon>
                     </button>
-                    <button mat-menu-item disabled>
-                      <mat-icon>settings</mat-icon>
-                      <span>Settings</span>
-                    </button>
-                    <button mat-menu-item (click)="logOut()">
-                      <mat-icon>exit_to_app</mat-icon>
-                      <span>Logout</span>
-                    </button>
-                  </mat-menu>
-        </mat-toolbar-row>
-    </mat-toolbar>
-    <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
-        <mat-sidenav #sidenav mode="side" fxFlex="150px">
-            <mat-menu #appMenu="matMenu" class="uploadMenu">
-                <button mat-menu-item (click)="newFolder()">New Folder</button>
-                <mat-divider></mat-divider>
-                <button mat-menu-item (click)="uploader.click()">Upload File</button>
-                <input hidden type="file" #uploader (change)="uploadFile($event)" multiple/>
-                <button mat-menu-item>Upload Folder</button>
-            </mat-menu>
-            <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
-                Upload
-            </button>
-            <mat-list role="list">
-                <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
-                    <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
-                    <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
-                </ng-container>
-            </mat-list>
-        </mat-sidenav>
-        <mat-sidenav-content class="width100Percent" fxLayout="row" fxLayoutAlign="center center">
-            <router-outlet></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-    <div id="uploadTaskDiv">
-       <div *ngFor="let uploadTask of uploadTasks">
-           {{getUploadPercentage(uploadTask | async)}}
-       </div>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="profilePage()">
+                        <mat-icon>account_circle</mat-icon>
+                        <span>Profile</span>
+                        </button>
+                        <button mat-menu-item disabled>
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                        </button>
+                        <button mat-menu-item (click)="logOut()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        <span>Logout</span>
+                        </button>
+                    </mat-menu>
+            </mat-toolbar-row>
+        </mat-toolbar>
+        <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
+            <mat-sidenav #sidenav mode="side" fxFlex="150px">
+                <mat-menu #appMenu="matMenu" class="uploadMenu">
+                    <button mat-menu-item (click)="newFolder()">New Folder</button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="uploader.click()">Upload File</button>
+                    <input hidden type="file" #uploader (change)="uploadFile($event)" multiple/>
+                    <button mat-menu-item>Upload Folder</button>
+                </mat-menu>
+                <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
+                    Upload
+                </button>
+                <mat-list role="list">
+                    <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
+                        <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
+                        <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
+                    </ng-container>
+                </mat-list>
+            </mat-sidenav>
+            <mat-sidenav-content class="width100Percent" fxLayout="row" fxLayoutAlign="center center">
+                <router-outlet></router-outlet>
+            </mat-sidenav-content>
+        </mat-sidenav-container>
+        <div id="uploadTaskDiv">
+        <div *ngFor="let uploadTask of uploadTasks">
+            {{getUploadPercentage(uploadTask | async)}}
+        </div>
+        </div>
     </div>
-</div>
 </ng-template>

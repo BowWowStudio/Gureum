@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import * as firebase from 'firebase';
 import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
 import { Observable, Subject } from 'rxjs';
+import { HierArchy } from 'src/app/components/dashboard/fileList/fileList.type';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,22 @@ export class FileListService {
             return 1;
           }})
       );
+    });
+    return newObservable.asObservable();
+  }
+  public getHierarchy(folderId: string): Observable<HierArchy[]> {
+    const newObservable = new Subject<HierArchy[]>();
+    const hierarchy: HierArchy[] = [];
+    this.db.doc(folderId).get().then(async doc => {
+      const leaf = doc.data() as FileDataStore;
+      hierarchy.push({name: leaf.name, hash: leaf.hash});
+      let node: FileDataStore = leaf;
+      while (node.parent !== null) {
+        node = (await this.db.doc(node.parent).get()).data() as FileDataStore;
+        hierarchy.unshift({name: node.name, hash: node.hash});
+      }
+      hierarchy.unshift({name : 'My Drive', hash : null});
+      newObservable.next(hierarchy);
     });
     return newObservable.asObservable();
   }

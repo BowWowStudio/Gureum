@@ -15,11 +15,11 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
   }
   public openFolder(hash: string) {
-    if (hash === undefined) {
+    if (hash === undefined || hash === null) {
       this.route.navigate(['/dashboard', 'main']);
     } else {
       this.route.navigate(['/dashboard', 'folder', hash]);
     }
-    this.folderClick.emit();
+    // this.folderClick.emit();
   }
 }

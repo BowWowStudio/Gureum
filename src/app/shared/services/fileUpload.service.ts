@@ -23,33 +23,14 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
     const docId = this.crypto.findFolderHash(name, uid, new Date());
     let newFolder: FileDataStore;
     const documentRef = this.db.collection('document');
-    if (parentFolderDocId !== null) {
-      // find the corresponding doc and find the folder path
-      let fileDataStore: FileDataStore;
-      try {
-        fileDataStore = ((await documentRef.doc(parentFolderDocId).get()).data() as FileDataStore);
-      } catch (err) {
-        throw Error('Parent path does not exist');
-      }
-      newFolder = {
-        bucket : this.ref.bucket,
-        isFolder : true,
-        name : name,
-        owner : uid,
-        parent : parentFolderDocId,
-        hash: docId,
-      };
-    } else {
-      // path is equal to the uid
-      newFolder = {
-        bucket : this.ref.bucket,
-        isFolder : true,
-        name : name,
-        owner : uid,
-        parent: null,
-        hash: docId,
-      };
-    }
+    newFolder = {
+      bucket : this.ref.bucket,
+      isFolder : true,
+      name : name,
+      owner : uid,
+      parent: parentFolderDocId,
+      hash: docId,
+    };
     await documentRef.doc(docId).set(newFolder);
   }
   public fileUpload(file: File, parentFolderDocId = null): Observable<firebase.storage.UploadTask> {

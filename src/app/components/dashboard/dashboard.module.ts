@@ -9,6 +9,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FileListComponent } from './fileList/fileList.component';
 import { ToolbarComponent } from './fileList/toolbar/toolbar.component';
 import { NewFolderDialogComponent } from './fileList/newFolderDialog/newFolderDialog.component';
+import { ContextMenuComponent } from './fileList/contextMenu/contextMenu.component';
 
 @NgModule({
   imports: [
@@ -26,7 +27,7 @@ import { NewFolderDialogComponent } from './fileList/newFolderDialog/newFolderDi
     MatMenuModule,
     MatDialogModule,
   ],
-  declarations: [ ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent],
+  declarations: [ ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent, ContextMenuComponent],
   providers: [
   ],
   schemas: [

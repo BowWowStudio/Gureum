@@ -15,11 +15,11 @@ import { FileListComponent } from './components/dashboard/fileList/fileList.comp
 const appRoutes: Routes = [
 
   // Public pages
-  { path: '', redirectTo: '/login', pathMatch : 'full', canActivate:[LoginGuardService]},
-  { path: 'login', component: AuthComponent, canActivate:[LoginGuardService]},
-  { path: 'register', component: SignupComponentComponent ,canActivate:[LoginGuardService]},
+  { path: '', redirectTo: '/login', pathMatch : 'full', canActivate: [LoginGuardService]},
+  { path: 'login', component: AuthComponent, canActivate: [LoginGuardService]},
+  { path: 'register', component: SignupComponentComponent , canActivate: [LoginGuardService]},
 
-  { path: 'dashboard',  canActivateChild:[AuthGuardService], children: [
+  { path: 'dashboard',  canActivateChild: [AuthGuardService], children: [
     {path: '', redirectTo : 'main', pathMatch : 'full'},
     {path: 'folder/:hash', component: FileListComponent},
     {path: 'main', component: FileListComponent },

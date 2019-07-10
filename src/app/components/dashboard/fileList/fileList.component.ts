@@ -36,7 +36,7 @@ export class FileListComponent implements OnInit, OnDestroy {
   private db: firebase.firestore.Firestore;
   private zipFile: JSZip = new JSZip();
   public fileLists: FileItem[];
-  public hierarchies: HierArchy[] = [{ hash: undefined, name: 'My Drive' }];
+  public hierarchies: HierArchy[] = [{ hash: null, name: 'My Drive' }];
   public loading;
   public datas: FileItem[];
   public displayedColumns: string[] = ['name', 'owner'];
@@ -48,6 +48,8 @@ export class FileListComponent implements OnInit, OnDestroy {
   ]);
   public dataSource = new MatTableDataSource();
   public selectedRow: Set<FileItem> = new Set();
+  public contextMenuTop = 0;
+  public contextMenuLeft = 0;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnDestroy(): void {}
@@ -55,10 +57,26 @@ export class FileListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setIsLoading(true);
     this.auth.getUserObservable().subscribe(user => {
-      this.fileListService.fileDataStoreToFileListDetail(user.uid).subscribe(a => {
-        this.dataSource.data = a;
-        this.setIsLoading(false);
-      });
+      if (this.route.url.includes(this.folderUrl)) {
+        // If this is not the root directory
+        this.activatedRoute.paramMap.subscribe(async paramMap => {
+          const hash = paramMap.get('hash');
+          this.fileListService.getHierarchy(hash).subscribe(hierarchies => {
+            this.hierarchies = hierarchies;
+            this.dataInit(user.uid, hash);
+          });
+        });
+      } else {
+        // if this is the root directory
+        this.dataInit(user.uid);
+      }
+    });
+
+  }
+  private dataInit(uid: string, hash: string = null) {
+    this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(result => {
+      this.dataSource.data = result;
+      this.setIsLoading(false);
     });
   }
   public download(blob: Blob, name: string) {
@@ -83,10 +101,10 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.loading = loading;
   }
   public openFolder(hash: string) {
-    if (hash === undefined) {
+    if (hash === undefined || hash === null) {
       this.route.navigate(['/dashboard', 'main']);
     } else {
-      this.route.navigate(['/dashboard', 'folder', hash]);
+      this.route.navigate(['/dashboard', 'folder', hash], {queryParams: {hash: hash}});
     }
   }
   public toggleSelect(element: FileItem, event: KeyboardEvent) {
@@ -117,5 +135,23 @@ export class FileListComponent implements OnInit, OnDestroy {
       const content: Blob = await this.zipFile.generateAsync({ type: 'blob' });
       this.download(content, 'files');
     }
+  }
+  public onFileRightClick(event: MouseEvent, element: FileItem) {
+    if (this.selectedRow.has(element)) {
+
+    } else {
+      this.selectedRow.clear();
+      this.selectedRow.add(element);
+    }
+    if (event.target instanceof Element) {
+      const rect = event.target;
+      this.contextMenuTop = event.clientY - rect.;
+      this.contextMenuLeft = event.clientX - rect.left;
+    }
+    console.log(this.contextMenuTop);
+    event.preventDefault();
+  }
+  public onRightClick(event: MouseEvent) {
+    event.preventDefault();
   }
 }

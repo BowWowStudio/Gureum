@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, HostListener, } from '@angular/core';
 import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
 import { Menu, MenuDetail, HTMLInputEvent } from '@shared/interfaces/app.type';
-import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@shared/services/auth.service';
 import { MenuClickService } from '@shared/services/menuClick.service';
 import { FileUploadService } from '@shared/services/fileUpload.service';
 import { MatDialog } from '@angular/material';
 import { NewFolderDialogComponent } from './components/dashboard/fileList/newFolderDialog/newFolderDialog.component';
 import { Observable } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: "app-root",
@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
       this.updateButtonCoordinate();
     }
   }
+  private readonly folderUrl = 'folder';
   private auth = ['/login', '/register'];
   public sideNavOpen = false;
   public menuEnum = Menu;
@@ -57,7 +58,10 @@ export class AppComponent implements OnInit {
       firebase.initializeApp(firebaseKeys);
     }
   }
-
+  public onRightClick($event : MouseEvent){
+    console.log('helo');
+    $event.preventDefault();
+  }
   public toggleSideNav() {
     this.sideNavOpen = !this.sideNavOpen;
   }
@@ -85,7 +89,6 @@ export class AppComponent implements OnInit {
       };
   }
   public newFolder() {
-    const folderUrl = 'folder';
     const dialogRef = this.dialog.open(NewFolderDialogComponent, {
       width: '250px',
       data: {}
@@ -94,19 +97,21 @@ export class AppComponent implements OnInit {
       if (folderName === undefined) {
         return;
       }
-      if (this.route.url.includes(folderUrl)) {
-        this.activatedRoute.paramMap.subscribe(async paramMap => {
-          const hash = paramMap.get('hash');
-          await this.fileUploadService.newFolder(folderName, hash);
-        });
+      if (this.route.url.includes(this.folderUrl)) {
+        const hash = this.getHashFromURL(this.route.url);
+        await this.fileUploadService.newFolder(folderName, hash);
       } else {
         await this.fileUploadService.newFolder(folderName);
       }
     });
   }
   public async uploadFile(event: HTMLInputEvent) {
+    let hash = null;
+    if (this.route.url.includes(this.folderUrl)) {
+      hash = this.getHashFromURL(this.route.url);
+    }
     for (let i = 0; i !== event.target.files.length; i += 1) {
-      this.uploadTasks.push(this.fileUploadService.fileUpload(event.target.files.item(i)));
+      this.uploadTasks.push(this.fileUploadService.fileUpload(event.target.files.item(i), hash));
     }
   }
   public getUploadPercentage(uploadTask: firebase.storage.UploadTask): number {
@@ -114,5 +119,10 @@ export class AppComponent implements OnInit {
       return 0;
     }
     return Math.ceil(uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes * 100);
+  }
+  private getHashFromURL(url:string):string{
+    const urls = url.split('/')
+    const hash = urls[urls.indexOf(this.folderUrl) + 1];
+    return hash.split('?')[0];
   }
 }
