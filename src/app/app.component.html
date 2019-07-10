@@ -37,13 +37,14 @@
             <mat-menu #appMenu="matMenu" class="uploadMenu">
                 <button mat-menu-item (click)="newFolder()">New Folder</button>
                 <mat-divider></mat-divider>
-                <button mat-menu-item>Upload File</button>
+                <button mat-menu-item (click)="uploader.click()">Upload File</button>
+                <input hidden type="file" #uploader (change)="uploadFile($event)" multiple/>
                 <button mat-menu-item>Upload Folder</button>
             </mat-menu>
             <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
                 Upload
             </button>
-            <mat-list role="list"  >
+            <mat-list role="list">
                 <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
                     <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
                     <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
@@ -51,8 +52,13 @@
             </mat-list>
         </mat-sidenav>
         <mat-sidenav-content class="width100Percent" fxLayout="row" fxLayoutAlign="center center">
-            <router-outlet ></router-outlet>
+            <router-outlet></router-outlet>
         </mat-sidenav-content>
     </mat-sidenav-container>
+    <div id="uploadTaskDiv">
+       <div *ngFor="let uploadTask of uploadTasks">
+           {{getUploadPercentage(uploadTask | async)}}
+       </div>
+    </div>
 </div>
 </ng-template>

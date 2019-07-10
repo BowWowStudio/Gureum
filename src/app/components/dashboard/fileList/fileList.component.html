@@ -6,7 +6,7 @@
 <ng-template #loaded>
   <mat-card class="width100Percent height100Percent">
     <mat-card-header class="width100Percent" fxLayout="row" fxLayoutAlign="space-between center">
-        <app-toolbar [Hierarchy]="hierarchies" (folderClick)="setIsLoading(true)"></app-toolbar>
+        <app-toolbar [Hierarchy]="hierarchies"></app-toolbar>
         <span class="example-spacer"></span>
         <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Additional Funtionality">
             <mat-icon>more_vert</mat-icon>

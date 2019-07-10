@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, } from '@angular/core';
 import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
-import { Menu, MenuDetail } from '@shared/interfaces/app.type';
+import { Menu, MenuDetail, HTMLInputEvent } from '@shared/interfaces/app.type';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@shared/services/auth.service';
 import { MenuClickService } from '@shared/services/menuClick.service';
 import { FileUploadService } from '@shared/services/fileUpload.service';
 import { MatDialog } from '@angular/material';
 import { NewFolderDialogComponent } from './components/dashboard/fileList/newFolderDialog/newFolderDialog.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: "app-root",
@@ -16,6 +17,7 @@ import { NewFolderDialogComponent } from './components/dashboard/fileList/newFol
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
+
   private uploadButton: ElementRef<HTMLButtonElement>;
   @ViewChild('uploadButton', {read: ElementRef, static: false}) set uploadButtonElement(uploadButton: ElementRef<HTMLButtonElement>) {
     if (uploadButton !== undefined && uploadButton !== null) {
@@ -28,9 +30,10 @@ export class AppComponent implements OnInit {
   public menuEnum = Menu;
   public menuDetails: MenuDetail[];
   public uploadButtonCoordinate: [number, number];
+  public uploadTasks: Observable<firebase.storage.UploadTask>[] = [];
   constructor(private route: Router, private authService: AuthService,
      private menuService: MenuClickService, private fileUploadService: FileUploadService,
-     public dialog: MatDialog, private activatedRoute: ActivatedRoute ) {
+     public dialog: MatDialog, private activatedRoute: ActivatedRoute, ) {
     this.menuDetails = [ {
       name: 'My Drive',
       isHover: false,
@@ -74,7 +77,6 @@ export class AppComponent implements OnInit {
   public updateButtonCoordinate() {
     const element = this.uploadButton.nativeElement;
     this.uploadButtonCoordinate = [element.getBoundingClientRect().left, -element.offsetHeight];
-    console.log(this.uploadButtonCoordinate);
   }
   public calculateUploadMenuStyle() {
       return this.uploadButtonCoordinate === undefined ? {} : {
@@ -89,7 +91,9 @@ export class AppComponent implements OnInit {
       data: {}
     });
     dialogRef.afterClosed().subscribe(async folderName => {
-      console.log(folderName);
+      if (folderName === undefined) {
+        return;
+      }
       if (this.route.url.includes(folderUrl)) {
         this.activatedRoute.paramMap.subscribe(async paramMap => {
           const hash = paramMap.get('hash');
@@ -99,5 +103,16 @@ export class AppComponent implements OnInit {
         await this.fileUploadService.newFolder(folderName);
       }
     });
+  }
+  public async uploadFile(event: HTMLInputEvent) {
+    for (let i = 0; i !== event.target.files.length; i += 1) {
+      this.uploadTasks.push(this.fileUploadService.fileUpload(event.target.files.item(i)));
+    }
+  }
+  public getUploadPercentage(uploadTask: firebase.storage.UploadTask): number {
+    if (uploadTask === null) {
+      return 0;
+    }
+    return Math.ceil(uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes * 100);
   }
 }
