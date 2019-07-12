@@ -46,7 +46,6 @@
       </ng-template>      
     </mat-card-content>
   </mat-card>
-  <app-contextMenu [top]="contextMenuTop" [left]="contextMenuLeft" [selectedFiles]="selectedRow">
-
-  </app-contextMenu>
+    <app-contextMenu [@openClose]="isContextMenuOpened ? 'open' : 'closed'"  [top]="contextMenuTop" [left]="contextMenuLeft" [fileItems]="selectedRow">
+    </app-contextMenu>
 </ng-template>
