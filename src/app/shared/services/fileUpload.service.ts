@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import * as firebase from 'firebase';
 import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
 import { Subject, Observable } from 'rxjs';
+import { FileItem } from 'src/app/components/dashboard/fileList/fileList.type';
 
 @Injectable({
   providedIn: 'root'
@@ -53,5 +54,11 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
        });
     });
     return subject.asObservable();
+  }
+  public fileDelete(files : Set<FileItem>){
+    
+  }
+  public fileDownload(files: Set<FileItem>){
+    
   }
 }

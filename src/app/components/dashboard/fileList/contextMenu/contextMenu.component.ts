@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, HostBinding, ChangeDetectorRef } from '@angular/core';
+import { FileItem } from '../fileList.type';
 
 @Component({
   selector: 'app-contextMenu',
@@ -17,7 +18,7 @@ export class ContextMenuComponent implements OnInit {
     this.styleLeft = number;
     this.changeDetector.detectChanges();
   }
-  
+  @Input() selectedFiles :  Set<FileItem>;
   @HostBinding('style.top.px')
   public styleTop = 0;
   @HostBinding('style.left.px')

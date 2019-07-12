@@ -47,7 +47,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     // ['size', 'Size']
   ]);
   public dataSource = new MatTableDataSource();
-  public selectedRow: Set<FileItem> = new Set();
+  public selectedRow:c = new Set();
   public contextMenuTop = 0;
   public contextMenuLeft = 0;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -145,8 +145,8 @@ export class FileListComponent implements OnInit, OnDestroy {
     }
     if (event.target instanceof Element) {
       const rect = event.target;
-      this.contextMenuTop = event.clientY - rect.;
-      this.contextMenuLeft = event.clientX - rect.left;
+      this.contextMenuTop = event.clientY - 64;
+      this.contextMenuLeft = event.clientX;
     }
     console.log(this.contextMenuTop);
     event.preventDefault();
