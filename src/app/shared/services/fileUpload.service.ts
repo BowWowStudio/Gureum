@@ -5,7 +5,8 @@ import * as firebase from 'firebase';
 import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
 import { Subject, Observable } from 'rxjs';
 import { FileItem } from 'src/app/components/dashboard/fileList/fileList.type';
-
+import { saveAs } from 'file-saver';
+import * as JSZip from 'jszip';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,11 +14,13 @@ export class FileUploadService {
 
   private db: firebase.firestore.Firestore;
   private ref: firebase.storage.Reference;
+  private zipFile: JSZip = new JSZip();
 constructor(private crypto: CryptoService, private authService: AuthService) {
   this.db = firebase.firestore();
   this.authService.getUserObservable().subscribe(user => {
     this.ref = firebase.storage().ref(user.uid);
   });
+
 }
   public async newFolder(name, parentFolderDocId = null): Promise<void> {
     const uid = this.authService.getUser().uid;
@@ -55,10 +58,49 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
     });
     return subject.asObservable();
   }
-  public fileDelete(files : Set<FileItem>){
-    
+  public async fileDelete(files: Set<FileItem>) {
+    for await(const file of files) {
+      this.authService.getUserObservable().subscribe(async user => {
+        this.db.collection('document').doc(file.hash).delete();
+        firebase.storage().ref(user.uid).child(file.hash).delete();
+      });
+    }
   }
-  public fileDownload(files: Set<FileItem>){
-    
+  public async fileDownload(files: Set<FileItem>) {
+    if (files.size === 1) {
+      const file = files.values().next().value;
+      console.log(file);
+      this.download(await this.getBlobFromHash(file), file.name);
+    } else {
+      for (const file of files) {
+        this.zipFile.file<'blob'>(
+          // TODO: calculate full path
+          file.ref.fullPath
+            .split('/')
+            .slice(1)
+            .join('/'),
+          await this.getBlobFromHash(file)
+        );
+      }
+      const content: Blob = await this.zipFile.generateAsync({ type: 'blob' });
+      this.download(content, 'files');
+    }
+  }
+  private download(blob: Blob, name: string) {
+    saveAs(blob, name);
+  }
+
+  private async getBlobFromHash(file: FileItem): Promise<Blob> {
+    return new Promise(async resolve => {
+      const ref = firebase.storage(firebase.app()).ref(`${file.owner}/${file.hash}`);
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('GET', await ref.getDownloadURL());
+      xhr.send();
+      xhr.onload = async () => {
+        const blob: Blob = xhr.response;
+        resolve(blob);
+      };
+    });
   }
 }

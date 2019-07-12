@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, HostBinding, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FileItem } from '../fileList.type';
+import { FileUploadService } from '@shared/services/fileUpload.service';
 
 @Component({
   selector: 'app-contextMenu',
@@ -18,7 +19,7 @@ export class ContextMenuComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
 
-  constructor(private changeDetector: ChangeDetectorRef) { }
+  constructor(private changeDetector: ChangeDetectorRef, private fileUploadService: FileUploadService) { }
   @Input() fileItems: Set<FileItem> = new Set();
 
   @HostBinding('style.top.px')
@@ -38,5 +39,11 @@ export class ContextMenuComponent implements OnInit {
   public isOnlyFolders(): boolean {
     const tempArray = [...this.fileItems];
     return tempArray.every(file => file.isFolder);
+  }
+  public downloadFiles() {
+    this.fileUploadService.fileDownload(this.fileItems);
+  }
+  public deleteFiles() {
+    this.fileUploadService.fileDelete(this.fileItems);
   }
 }
