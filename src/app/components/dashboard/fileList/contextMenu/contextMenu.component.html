@@ -1,3 +1,81 @@
-<p>
-  contextMenu works!
-</p>
+<ng-container *ngIf="isOnlyFiles(); else folderOrMix">
+  <!-- Only files are selected -->
+  <button mat-menu-item>
+    <mat-icon>person_add</mat-icon>
+    <span>Share</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>share</mat-icon>
+    <span>Get sharable link</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>swap_horiz</mat-icon>
+    <span>Move to</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>create</mat-icon>
+    <span>Rename</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    <mat-icon>vertical_align_bottom</mat-icon>
+    <span>Download</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</ng-container>
+<ng-template #folderOrMix>
+  <ng-container *ngIf="isOnlyFolders(); else mixFilesAndFolder">
+    <!-- Only folder is selected -->
+    <button mat-menu-item>
+      <mat-icon>person_add</mat-icon>
+      <span>Share</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>share</mat-icon>
+      <span>Get sharable link</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>swap_horiz</mat-icon>
+      <span>Move to</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>palette</mat-icon>
+      <span>Change color</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item>
+      <mat-icon>vertical_align_bottom</mat-icon>
+      <span>Download</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item>
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-container>
+  <ng-template #mixFilesAndFolder>
+    <button mat-menu-item>
+      <mat-icon>person_add</mat-icon>
+      <span>Share</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>swap_horiz</mat-icon>
+      <span>Move to</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item>
+      <mat-icon>vertical_align_bottom</mat-icon>
+      <span>Download</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item>
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+  
+</ng-template>

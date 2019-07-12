@@ -6,7 +6,7 @@
 </ng-container>
 <ng-template #main>
     <div fxLayout="column" fxFlex=100>
-        <mat-toolbar color="primary" fxFlex="64px" (contextmenu)="onRightClick($event)">
+        <mat-toolbar color="primary" fxFlex="AppComponent.toolbarHeight" (contextmenu)="onRightClick($event)">
             <mat-toolbar-row>
                 <button mat-icon-button (click)="sidenav.toggle();">
                     <mat-icon class="mat-18">menu</mat-icon>

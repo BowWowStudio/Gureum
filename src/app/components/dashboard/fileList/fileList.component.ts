@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import * as firebase from 'firebase';
 import { AuthService } from '@shared/services/auth.service';
 import { FileItem, MetaData, HierArchy } from './fileList.type';
@@ -7,19 +7,32 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import * as JSZip from 'jszip';
-import { resolve } from 'q';
 import { MatDialog } from '@angular/material';
-import { NewFolderDialogComponent } from './newFolderDialog/newFolderDialog.component';
 import { MenuClickService } from '@shared/services';
-import { Menu } from '@shared/interfaces/app.type';
 import { CryptoService } from '@shared/services/Crypto.service';
-import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
 import { FileListService } from '@shared/services/fileList.service';
+import { AppComponent } from 'src/app/app.component';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: "app-fileList",
   templateUrl: './fileList.component.html',
-  styleUrls: ['./fileList.component.scss']
+  styleUrls: ['./fileList.component.scss'],
+  animations: [
+    trigger('openClose', [
+      state('open', style({
+        opacity: 1,
+        height : '*',
+      })),
+      state('closed', style({
+        opacity: 0,
+        height: '0px',
+      })),
+      transition('closed => open', [
+        animate('0.1s')
+      ]),
+    ]),
+  ],
 })
 export class FileListComponent implements OnInit, OnDestroy {
   constructor(
@@ -50,8 +63,11 @@ export class FileListComponent implements OnInit, OnDestroy {
   public selectedRow: Set<FileItem> = new Set();
   public contextMenuTop = 0;
   public contextMenuLeft = 0;
+  public isContextMenuOpened = false;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+  @HostListener('click') leftClick() {
+    this.isContextMenuOpened = false;
+  }
   ngOnDestroy(): void {}
 
   ngOnInit() {
@@ -144,11 +160,16 @@ export class FileListComponent implements OnInit, OnDestroy {
       this.selectedRow.add(element);
     }
     if (event.target instanceof Element) {
-      const rect = event.target;
-      this.contextMenuTop = event.clientY - rect.;
-      this.contextMenuLeft = event.clientX - rect.left;
+      this.contextMenuTop = event.clientY - AppComponent.toolbarHeight;
+      this.contextMenuLeft = event.clientX ;
     }
-    console.log(this.contextMenuTop);
+    if (this.isContextMenuOpened) {
+      this.isContextMenuOpened = false;
+      setTimeout(() => this.isContextMenuOpened = true, 150);
+    } else {
+
+      this.isContextMenuOpened = true;
+    }
     event.preventDefault();
   }
   public onRightClick(event: MouseEvent) {

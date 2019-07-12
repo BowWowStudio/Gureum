@@ -17,7 +17,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
-
+  static readonly toolbarHeight = 64;
   private uploadButton: ElementRef<HTMLButtonElement>;
   @ViewChild('uploadButton', {read: ElementRef, static: false}) set uploadButtonElement(uploadButton: ElementRef<HTMLButtonElement>) {
     if (uploadButton !== undefined && uploadButton !== null) {
