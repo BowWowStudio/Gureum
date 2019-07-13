@@ -66,6 +66,9 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
       });
     }
   }
+  public async fileUploadCancel(uploadTask: firebase.storage.UploadTask) {
+    uploadTask.cancel();
+  }
   public async fileDownload(files: Set<FileItem>) {
     if (files.size === 1) {
       const file = files.values().next().value;
@@ -86,10 +89,11 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
       this.download(content, 'files');
     }
   }
+
+
   private download(blob: Blob, name: string) {
     saveAs(blob, name);
   }
-
   private async getBlobFromHash(file: FileItem): Promise<Blob> {
     return new Promise(async resolve => {
       const ref = firebase.storage(firebase.app()).ref(`${file.owner}/${file.hash}`);

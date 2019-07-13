@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
          MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule,
-         MatCardModule, MatTabsModule, MatIconModule, MatListModule } from '@angular/material';
+         MatCardModule, MatTabsModule, MatIconModule, MatListModule, MatProgressSpinnerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -50,7 +50,7 @@ import { FileListService } from '@shared/services/fileList.service';
     CommonModule,
     MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
     MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule, MatListModule,
-    MatCardModule, MatTabsModule, MatIconModule,
+    MatCardModule, MatTabsModule, MatIconModule, MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

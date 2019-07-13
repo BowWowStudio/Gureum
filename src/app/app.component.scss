@@ -56,12 +56,37 @@ body{
   display: block;
   left: auto;
   max-height: 323px;
-  opacity: .01;
+  // opacity: 1;
   overflow: visible;
   position: absolute;
   right: 24px;
   z-index: 1001;
-  height:300px;
-  width:300px;
-  background-color: bisque;
+  height:auto ;
+  width:362px;
+  background-color: white;
+  -webkit-box-shadow: 0 2px 8px 0 rgba(0,0,0,.2);
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,.2);
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transform: translate3d(0,24px,0);
+  transform: translate3d(0,24px,0);
+  -webkit-transition: transform .15s cubic-bezier(0.4,0.0,1,1),opacity .15s cubic-bezier(0.4,0.0,1,1),visibility 0ms linear .15s;
+  transition: transform .15s cubic-bezier(0.4,0.0,1,1),opacity .15s cubic-bezier(0.4,0.0,1,1),visibility 0ms linear .15s;
+  z-index: 1001;
+  bottom: 54px;
+  display: block;
+  left: auto;
+  max-height: 323px;
+  overflow: visible;
+  position: absolute;
+  right: 24px;
+}
+#uploadTaskDivToolbar{
+  background-color: #323232;
+  color: white;
+  border-radius: 3px 3px 0 0;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
 }

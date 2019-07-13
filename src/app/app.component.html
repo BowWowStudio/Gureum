@@ -55,10 +55,42 @@
                 <router-outlet></router-outlet>
             </mat-sidenav-content>
         </mat-sidenav-container>
-        <div id="uploadTaskDiv">
-        <div *ngFor="let uploadTask of uploadTasks">
-            {{getUploadPercentage(uploadTask | async)}}
-        </div>
+        <div id="uploadTaskDiv" *ngIf="uploadTaskDivOpened">
+            <mat-toolbar id="uploadTaskDivToolbar">
+                <span>Custom Toolbar</span>
+                <span class="example-spacer"></span>
+                <ng-container *ngIf="uploadTaskDivDetailOpened; else closeDetailDiv">
+                    <button mat-icon-button (click)="uploadTaskDivDetailOpened = !uploadTaskDivDetailOpened"><mat-icon>keyboard_arrow_down</mat-icon></button>
+                </ng-container>
+                <ng-template #closeDetailDiv>
+                    <button mat-icon-button (click)="uploadTaskDivDetailOpened = !uploadTaskDivDetailOpened"><mat-icon>keyboard_arrow_up</mat-icon></button>
+                </ng-template>
+                <button mat-icon-button (click)="uploadTaskDivOpened = false"><mat-icon>close</mat-icon></button>
+            </mat-toolbar>
+            <div *ngIf="uploadTaskDivDetailOpened">
+                <div *ngFor="let uploadTask of uploadTasks | keyvalue">  
+                    {{uploadTask.key.file.name}}
+                    <ng-container *ngIf="(uploadTask.value | async) === null || uploadTask.key === null; else uploadStart">
+                        <mat-progress-spinner
+                            mode="indeterminate">
+                        </mat-progress-spinner>
+                    </ng-container>
+                    <ng-template #uploadStart>
+                        <button mat-button (mouseover)="uploadTask.key.isHover = true" (mouseout)="uploadTask.key.isHover = false">
+                            <ng-container *ngIf="uploadTask.key.isHover ; else showProgress">
+                                <button mat-icon-button><mat-icon>cancel</mat-icon></button>
+                            </ng-container>
+                            <ng-template #showProgress>
+                                <mat-progress-spinner
+                                    mode="determinate"
+                                    [value]="getUploadPercentage(uploadTask.value | async)"
+                                    diameter="20">
+                                </mat-progress-spinner>
+                            </ng-template>
+                        </button>                     
+                    </ng-template>
+                </div>
+            </div>            
         </div>
     </div>
 </ng-template>

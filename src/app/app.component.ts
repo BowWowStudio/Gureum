@@ -25,13 +25,16 @@ export class AppComponent implements OnInit {
       this.updateButtonCoordinate();
     }
   }
+  public uploadTaskDivOpened = true;
+  public uploadTaskDivDetailOpened = true;
+
   private readonly folderUrl = 'folder';
   private auth = ['/login', '/register'];
   public sideNavOpen = false;
   public menuEnum = Menu;
   public menuDetails: MenuDetail[];
   public uploadButtonCoordinate: [number, number];
-  public uploadTasks: Observable<firebase.storage.UploadTask>[] = [];
+  public uploadTasks: Map<{file: File, isCanceled: boolean, isHover: boolean}, Observable<firebase.storage.UploadTask>> = new Map();
   constructor(private route: Router, private authService: AuthService,
      private menuService: MenuClickService, private fileUploadService: FileUploadService,
      public dialog: MatDialog, private activatedRoute: ActivatedRoute, ) {
@@ -58,8 +61,7 @@ export class AppComponent implements OnInit {
       firebase.initializeApp(firebaseKeys);
     }
   }
-  public onRightClick($event : MouseEvent){
-    console.log('helo');
+  public onRightClick($event: MouseEvent) {
     $event.preventDefault();
   }
   public toggleSideNav() {
@@ -111,7 +113,9 @@ export class AppComponent implements OnInit {
       hash = this.getHashFromURL(this.route.url);
     }
     for (let i = 0; i !== event.target.files.length; i += 1) {
-      this.uploadTasks.push(this.fileUploadService.fileUpload(event.target.files.item(i), hash));
+      const file = event.target.files.item(i);
+      console.log(file);
+      this.uploadTasks.set({file: file, isCanceled: false, isHover: false}, (this.fileUploadService.fileUpload(file, hash)));
     }
   }
   public getUploadPercentage(uploadTask: firebase.storage.UploadTask): number {
@@ -120,9 +124,12 @@ export class AppComponent implements OnInit {
     }
     return Math.ceil(uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes * 100);
   }
-  private getHashFromURL(url:string):string{
-    const urls = url.split('/')
+  private getHashFromURL(url: string): string {
+    const urls = url.split('/');
     const hash = urls[urls.indexOf(this.folderUrl) + 1];
     return hash.split('?')[0];
+  }
+  public cancelUpload(uploadTask: firebase.storage.UploadTask) {
+    this.fileUploadService.fileUploadCancel(uploadTask);
   }
 }
