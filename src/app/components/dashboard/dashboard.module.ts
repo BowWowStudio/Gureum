@@ -10,6 +10,7 @@ import { FileListComponent } from './fileList/fileList.component';
 import { ToolbarComponent } from './fileList/toolbar/toolbar.component';
 import { NewFolderDialogComponent } from './fileList/newFolderDialog/newFolderDialog.component';
 import { ContextMenuComponent } from './fileList/contextMenu/contextMenu.component';
+import { SettingComponent } from './setting/setting.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,7 @@ import { ContextMenuComponent } from './fileList/contextMenu/contextMenu.compone
     MatMenuModule,
     MatDialogModule,
   ],
-  declarations: [ ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent, ContextMenuComponent],
+  declarations: [ ShareComponent, ProfileComponent, FileListComponent, ToolbarComponent,NewFolderDialogComponent, ContextMenuComponent, SettingComponent],
   providers: [
   ],
   schemas: [

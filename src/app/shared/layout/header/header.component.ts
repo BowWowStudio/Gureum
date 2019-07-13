@@ -21,7 +21,7 @@ export class HeaderComponent {
     {
       icon: 'description',
       title: 'Generated docs',
-      link: 'http://ngxmatfire-docs.jerouw.nl/'
+      link: 'http://gureum-docs.jerouw.nl/'
     },
     {
       icon: 'description',

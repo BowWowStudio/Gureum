@@ -34,6 +34,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CryptoService } from '@shared/services/Crypto.service';
 import { FileListService } from '@shared/services/fileList.service';
+import { ShareModule } from './components/file/share.module';
 
 // Pages
 
@@ -59,7 +60,8 @@ import { FileListService } from '@shared/services/fileList.service';
     AuthModule,
     DashboardModule,
     FlexLayoutModule,
-    RouterModule
+    RouterModule,
+    ShareModule,
   ],
   providers: [
     UserService,

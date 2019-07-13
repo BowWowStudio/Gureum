@@ -59,7 +59,7 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
     return subject.asObservable();
   }
   public async fileDelete(files: Set<FileItem>) {
-    for await(const file of files) {
+    for await(const file of Array.from(files)) {
       this.authService.getUserObservable().subscribe(async user => {
         this.db.collection('document').doc(file.hash).delete();
         firebase.storage().ref(user.uid).child(file.hash).delete();
@@ -75,7 +75,7 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
       console.log(file);
       this.download(await this.getBlobFromHash(file), file.name);
     } else {
-      for (const file of files) {
+      for (const file of Array.from(files)) {
         this.zipFile.file<'blob'>(
           // TODO: calculate full path
           file.ref.fullPath

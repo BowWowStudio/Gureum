@@ -1,8 +1,8 @@
-[![demolive](https://img.shields.io/badge/demo-live-green.svg)](http://ngxmatfire.jerouw.nl/)
-[![npmversion](https://img.shields.io/npm/v/ngxmatfire.svg)]()
-[![npmlicense](https://img.shields.io/npm/l/ngxmatfire.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)
+[![demolive](https://img.shields.io/badge/demo-live-green.svg)](http://gureum.jerouw.nl/)
+[![npmversion](https://img.shields.io/npm/v/gureum.svg)]()
+[![npmlicense](https://img.shields.io/npm/l/gureum.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)
 [![stars](https://img.shields.io/github/stars/jeroenouw/AngularMaterialFirebase.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/stargazers)
-[![downloads](https://img.shields.io/npm/dt/ngxmatfire.svg)]()
+[![downloads](https://img.shields.io/npm/dt/gureum.svg)]()
 
 ![logo](https://jerouw.nl/wp-content/uploads/2017/05/ngfbmd.png "Logo")
 
@@ -10,7 +10,7 @@
 
 A full stack starter app containing [Angular 8](https://angular.io), [Material](https://material.io/) and [Firebase](https://firebase.google.com/). See also: [AngularMaterialGo](https://github.com/jeroenouw/AngularMaterialGo)
 
-## [Live demo](http://ngxmatfire.jerouw.nl)
+## [Live demo](http://gureum.jerouw.nl)
 
 ![loginpage](https://jerouw.nl/wp-content/uploads/2017/05/ngfbmdprintscreen.png "Logo")
 
@@ -22,7 +22,7 @@ A full stack starter app containing [Angular 8](https://angular.io), [Material](
 
 [Discover all the features in this project](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/FEATURES.md)
 
-## [Live automated documentation](http://ngxmatfire-docs.jerouw.nl)
+## [Live automated documentation](http://gureum-docs.jerouw.nl)
 
 [Generate technical documentation automatically with Compodoc](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/docs/COMPODOC.md)
 
@@ -40,4 +40,4 @@ Want to file a bug, contribute some code, or improve documentation? Feel free to
 
 ## License
 
-[![npmlicense](https://img.shields.io/npm/l/ngxmatfire.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)
+[![npmlicense](https://img.shields.io/npm/l/gureum.svg)](https://github.com/jeroenouw/AngularMaterialFirebase/blob/master/LICENSE/)

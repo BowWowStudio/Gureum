@@ -33,11 +33,11 @@ export class ContextMenuComponent implements OnInit {
   ngOnInit() {
   }
   public isOnlyFiles(): boolean {
-    const tempArray = [...this.fileItems];
+    const tempArray = Array.from(this.fileItems);
     return tempArray.every(file => !file.isFolder);
   }
   public isOnlyFolders(): boolean {
-    const tempArray = [...this.fileItems];
+    const tempArray = Array.from(this.fileItems);
     return tempArray.every(file => file.isFolder);
   }
   public downloadFiles() {
