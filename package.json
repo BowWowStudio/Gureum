@@ -31,7 +31,7 @@
     "compodoc:w": "compodoc -p src/tsconfig.app.json --serve --watch",
     "tscov": "tscov -m 90",
     "tscov:d": "tscov --details",
-    "deploy" : "firebase deploy"
+    "deploy": "firebase deploy"
   },
   "dependencies": {
     "@angular/animations": "^8.1.1",

@@ -32,13 +32,17 @@ export class AuthService {
         });
         return true;
       } catch (error) {
-        return false;
+        throw error;
       }
     }
   public async login(email: string, password: string): Promise<firebase.auth.UserCredential> {
-    const credential = await this.auth.auth.signInWithEmailAndPassword(email, password);
-    this.user = credential.user;
-    return credential;
+    try {
+      const credential = await this.auth.auth.signInWithEmailAndPassword(email, password);
+      this.user = credential.user;
+      return credential;
+    } catch (err) {
+      throw err;
+    }
   }
   public onSuccess(): void {
     sessionStorage.setItem('session-alive', 'true');

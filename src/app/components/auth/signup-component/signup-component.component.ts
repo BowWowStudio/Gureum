@@ -12,7 +12,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class SignupComponentComponent implements OnInit {
 
   public form: FormGroup;
-  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router,private snackBar: MatSnackBar) {
+  public showSpinner = false;
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar) {
     this.form = fb.group({
       'name' : ['', Validators.required],
       'email': ['', Validators.required],
@@ -23,9 +24,28 @@ export class SignupComponentComponent implements OnInit {
   ngOnInit() {
   }
   public async register() {
-    if (await this.authService.signUp(this.form.get('email').value, this.form.get('password').value, this.form.get('name').value)) {
-      this.router.navigateByUrl('/login');
-      this.snackBar.open('User Created');
+    try {
+      this.showSpinner = true;
+      if (await this.authService.signUp(this.form.get('email').value, this.form.get('password').value, this.form.get('name').value)) {
+        this.router.navigateByUrl('/login');
+        this.snackBar.open('User Created');
+      }
+    } catch (err) {
+      switch(err.code){
+        case 'auth/email-already-in-use':
+          this.openSnackBar('There already exists an account with the given email address', 'Ok');
+          break;
+        case 'auth/invalid-email':
+          this.openSnackBar('Please use the valid email', 'Ok');
+          break;
+      }
+    } finally {
+      this.showSpinner = false;
     }
+  }
+  private openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
   }
 }

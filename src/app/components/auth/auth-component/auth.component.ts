@@ -3,6 +3,8 @@ import { NgForm, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthService } from '@shared';
 import { Router } from '@angular/router';
+import * as firebase from 'firebase';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +14,7 @@ import { Router } from '@angular/router';
 export class AuthComponent {
   public form: FormGroup;
   public showSpinner = false;
-  constructor(private authService: AuthService, private fb: FormBuilder, private router:Router) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router:Router, private _snackBar: MatSnackBar) {
     this.form = fb.group({
       'email': ['', Validators.required],
       'password': ['', Validators.required],
@@ -28,7 +30,15 @@ export class AuthComponent {
         this.router.navigate(['/dashboard']);
       }
     } catch (err) {
-      console.error(err);
+      switch(err.code){
+        case 'auth/invalid-email' :
+          this.openSnackBar('Please check your email', 'ok');
+          break;
+        case 'auth/user-not-found' :
+        case 'auth/wrong-password' :
+          this.openSnackBar('Please check your email and password', 'ok');
+      }
+      
     }
     finally {
       this.showSpinner = false;
@@ -38,4 +48,9 @@ export class AuthComponent {
     return this.authService.onSuccess();
   }
 
+  private openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
 }

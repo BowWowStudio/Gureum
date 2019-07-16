@@ -1,4 +1,5 @@
-<mat-card>
+<mat-progress-bar mode="indeterminate" *ngIf="showSpinner"></mat-progress-bar>
+<mat-card [ngStyle]="{'opacity': showSpinner ? '0.5' : '1'}">
     <mat-card-header fxLayout="column" fxLayoutAlign="center center" id="titleContainer">
         <mat-card-title class="title" id="title">Gureum</mat-card-title>
         <mat-card-subtitle class="logo" fxLayout="row" fxLayoutAlign="center center" class="width100Percent">
@@ -6,6 +7,7 @@
         </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content fxLayout="row" fxLayoutAlign="center center">
+        
         <form [formGroup]="form" (ngSubmit)="login()" fxLayout="column" fxLayoutAlign="center center" fxFlex="300px">  
             <mat-form-field class="width100Percent">
                 <input matInput placeholder="Email" formControlName="email" />
