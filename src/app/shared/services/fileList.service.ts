@@ -11,12 +11,8 @@ import { HierArchy } from 'src/app/components/dashboard/fileList/fileList.type';
 })
 export class FileListService {
   private db: firebase.firestore.CollectionReference;
-  private uid: string;
   constructor(private crypto: CryptoService, private authService: AuthService) {
     this.db = firebase.firestore().collection('document');
-    this.authService.getUserObservable().subscribe(user => {
-      this.uid = user.uid;
-    });
   }
   public fileDataStoreToFileListDetail(uid: string, folderId: string = null): Observable<FileDataStore[]> {
     const newObservable = new Subject<FileDataStore[]>();

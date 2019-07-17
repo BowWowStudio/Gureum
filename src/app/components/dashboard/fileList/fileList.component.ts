@@ -1,14 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import * as firebase from 'firebase';
 import { AuthService } from '@shared/services/auth.service';
-import { FileItem, MetaData, HierArchy } from './fileList.type';
-
+import { FileItem, HierArchy } from './fileList.type';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material';
-import { MenuClickService } from '@shared/services';
-import { CryptoService } from '@shared/services/Crypto.service';
 import { FileListService } from '@shared/services/fileList.service';
 import { AppComponent } from 'src/app/app.component';
 import { trigger, state, style, transition, animate } from '@angular/animations';

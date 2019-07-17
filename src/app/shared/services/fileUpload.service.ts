@@ -17,10 +17,6 @@ export class FileUploadService {
   private zipFile: JSZip = new JSZip();
 constructor(private crypto: CryptoService, private authService: AuthService) {
   this.db = firebase.firestore();
-  this.authService.getUserObservable().subscribe(user => {
-    this.ref = firebase.storage().ref(user.uid);
-  });
-
 }
   public async newFolder(name, parentFolderDocId = null): Promise<void> {
     const uid = this.authService.getUser().uid;
