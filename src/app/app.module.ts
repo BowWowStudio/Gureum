@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
          MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule,
-         MatCardModule, MatTabsModule, MatIconModule, MatListModule, MatProgressSpinnerModule } from '@angular/material';
+         MatCardModule, MatTabsModule, MatIconModule, MatListModule, MatProgressSpinnerModule, MatProgressBarModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -35,6 +35,7 @@ import { CommonModule } from '@angular/common';
 import { CryptoService } from '@shared/services/Crypto.service';
 import { FileListService } from '@shared/services/fileList.service';
 import { ShareModule } from './components/file/share.module';
+import { ContextMenuService } from '@shared/services/ContextMenu.service';
 
 // Pages
 
@@ -51,7 +52,7 @@ import { ShareModule } from './components/file/share.module';
     CommonModule,
     MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
     MatToolbarModule, MatDialogModule, MatSidenavModule, MatNativeDateModule, MatListModule,
-    MatCardModule, MatTabsModule, MatIconModule, MatProgressSpinnerModule,
+    MatCardModule, MatTabsModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -72,6 +73,7 @@ import { ShareModule } from './components/file/share.module';
     AngularFireAuth,
     CryptoService,
     FileListService,
+    ContextMenuService
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

@@ -8,9 +8,6 @@
     <div fxLayout="column" fxFlex=100>
         <mat-toolbar color="primary" fxFlex="AppComponent.toolbarHeight" (contextmenu)="onRightClick($event)">
             <mat-toolbar-row>
-                <button mat-icon-button (click)="sidenav.toggle();">
-                    <mat-icon class="mat-18">menu</mat-icon>
-                </button>
                 <span>Gureum</span>
                 <span class="example-spacer"></span>
                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
@@ -32,8 +29,8 @@
                     </mat-menu>
             </mat-toolbar-row>
         </mat-toolbar>
-        <mat-sidenav-container class="container" fxFlex="calc(100%-64px)">
-            <mat-sidenav #sidenav mode="side" fxFlex="150px">
+        <mat-drawer-container class="container" fxFlex="calc(100%-64px)" >
+            <mat-drawer class="matDrawer" #sidenav mode="side" fxFlex="{{sideNavWidth+'px'}}" opened>
                 <mat-menu #appMenu="matMenu" class="uploadMenu">
                     <button mat-menu-item (click)="newFolder()">New Folder</button>
                     <mat-divider></mat-divider>
@@ -49,12 +46,23 @@
                         <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
                         <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
                     </ng-container>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <div fxLayout="column" style="width: 100%">
+                            Storage
+                            <mat-progress-bar
+                                class="example-margin"
+                                mode="determinate"
+                                [value]="(totalOccupatedSpace/totalSpace) * 100">
+                            </mat-progress-bar>
+                        </div>
+                    </mat-list-item>
                 </mat-list>
-            </mat-sidenav>
-            <mat-sidenav-content class="width100Percent" fxLayout="row" fxLayoutAlign="center center">
+            </mat-drawer>
+            <mat-drawer-content class="width100Percent backgroundWhite" fxLayout="row" fxLayoutAlign="center center">
                 <router-outlet></router-outlet>
-            </mat-sidenav-content>
-        </mat-sidenav-container>
+            </mat-drawer-content>
+        </mat-drawer-container>
         <div id="uploadTaskDiv" *ngIf="uploadTaskDivOpened">
             <mat-toolbar id="uploadTaskDivToolbar">
                 <span>Custom Toolbar</span>

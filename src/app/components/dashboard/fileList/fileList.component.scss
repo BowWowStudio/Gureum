@@ -23,8 +23,11 @@
   @extend %width100;
 }
 :host{
-  width:80%;
-  height: 80%;
+  width:100%;
+  height: 100%;
+}
+.spinnerDiv{
+  background-color: white;
 }
 .example-spacer {
   flex: 1 1 auto;
@@ -42,6 +45,7 @@
 .fileListCard{
   display:flex;
   flex-direction: column;
+  padding:0px;
 }
 .fileListTableDiv{
   overflow: auto;

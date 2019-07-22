@@ -2,22 +2,17 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public token: string;
-  public user: firebase.User;
   private db: firebase.firestore.Firestore;
+  private userSubject :Subject<firebase.User> = new Subject<firebase.User>();
   constructor(
     private router: Router,
     private auth: AngularFireAuth) {
       this.db = firebase.firestore();
-      this.auth.authState.subscribe(user => {
-        if (user !== null) {
-          this.user = user;
-        }
-      });
     }
 
     public async signUp(email: string, password: string, name: string): Promise<boolean> {
@@ -38,7 +33,7 @@ export class AuthService {
   public async login(email: string, password: string): Promise<firebase.auth.UserCredential> {
     try {
       const credential = await this.auth.auth.signInWithEmailAndPassword(email, password);
-      this.user = credential.user;
+      this.userSubject.next(credential.user);
       return credential;
     } catch (err) {
       throw err;
@@ -66,10 +61,7 @@ export class AuthService {
     return this.token;
   }
   public getUserObservable(): Observable<firebase.User> {
-    return this.auth.authState;
-  }
-  public getUser(): firebase.User {
-    return this.user;
+    return this.userSubject.asObservable();
   }
   public isAuthenticated(): string {
     if (firebase.auth().currentUser) {

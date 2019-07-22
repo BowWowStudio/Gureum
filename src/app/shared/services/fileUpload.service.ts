@@ -7,6 +7,7 @@ import { Subject, Observable } from 'rxjs';
 import { FileItem } from 'src/app/components/dashboard/fileList/fileList.type';
 import { saveAs } from 'file-saver';
 import * as JSZip from 'jszip';
+import { ContextMenuService } from './ContextMenu.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,25 +16,28 @@ export class FileUploadService {
   private db: firebase.firestore.Firestore;
   private ref: firebase.storage.Reference;
   private zipFile: JSZip = new JSZip();
-constructor(private crypto: CryptoService, private authService: AuthService) {
+constructor(private crypto: CryptoService, private authService: AuthService, private contextMenuService: ContextMenuService) {
   this.db = firebase.firestore();
 }
   public async newFolder(name, parentFolderDocId = null): Promise<void> {
-    const uid = this.authService.getUser().uid;
-    const docId = this.crypto.findFolderHash(name, uid, new Date());
-    let newFolder: FileDataStore;
-    const documentRef = this.db.collection('document');
-    newFolder = {
-      bucket : this.ref.bucket,
-      isFolder : true,
-      name : name,
-      owner : uid,
-      parent: parentFolderDocId,
-      hash: docId,
-    };
-    await documentRef.doc(docId).set(newFolder);
+    const uid = this.authService.getUserObservable().subscribe(async user=>{
+      const uid = user.uid;
+      const docId = this.crypto.findFolderHash(name, uid, new Date());
+      let newFolder: FileDataStore;
+      const documentRef = this.db.collection('document');
+      newFolder = {
+        bucket : this.ref.bucket,
+        isFolder : true,
+        name : name,
+        owner : uid,
+        parent: parentFolderDocId,
+        hash: docId,
+      };
+      documentRef.doc(docId).set(newFolder);
+    });
   }
   public fileUpload(file: File, parentFolderDocId = null): Observable<firebase.storage.UploadTask> {
+    this.contextMenuService.setOpen(true);
     const subject = new Subject<firebase.storage.UploadTask>();
     this.authService.getUserObservable().subscribe(async user => {
        const ref = firebase.storage().ref(user.uid);
@@ -68,7 +72,6 @@ constructor(private crypto: CryptoService, private authService: AuthService) {
   public async fileDownload(files: Set<FileItem>) {
     if (files.size === 1) {
       const file = files.values().next().value;
-      console.log(file);
       this.download(await this.getBlobFromHash(file), file.name);
     } else {
       for (const file of Array.from(files)) {

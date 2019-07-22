@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material';
 import { NewFolderDialogComponent } from './components/dashboard/fileList/newFolderDialog/newFolderDialog.component';
 import { Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ContextMenuService } from '@shared/services/ContextMenu.service';
+import { FileListService } from '@shared/services/fileList.service';
 
 @Component({
   selector: "app-root",
@@ -17,27 +19,16 @@ import { Router, ActivatedRoute } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
-  static readonly toolbarHeight = 64;
-  private uploadButton: ElementRef<HTMLButtonElement>;
   @ViewChild('uploadButton', {read: ElementRef, static: false}) set uploadButtonElement(uploadButton: ElementRef<HTMLButtonElement>) {
     if (uploadButton !== undefined && uploadButton !== null) {
       this.uploadButton = uploadButton;
       this.updateButtonCoordinate();
     }
   }
-  public uploadTaskDivOpened = true;
-  public uploadTaskDivDetailOpened = true;
-
-  private readonly folderUrl = 'folder';
-  private auth = ['/login', '/register'];
-  public sideNavOpen = false;
-  public menuEnum = Menu;
-  public menuDetails: MenuDetail[];
-  public uploadButtonCoordinate: [number, number];
-  public uploadTasks: Map<{file: File, isCanceled: boolean, isHover: boolean}, Observable<firebase.storage.UploadTask>> = new Map();
   constructor(private route: Router, private authService: AuthService,
      private menuService: MenuClickService, private fileUploadService: FileUploadService,
-     public dialog: MatDialog, private activatedRoute: ActivatedRoute, ) {
+     public dialog: MatDialog, private activatedRoute: ActivatedRoute, private contextMenuService: ContextMenuService,
+     private fileListService: FileListService) {
     this.menuDetails = [ {
       name: 'My Drive',
       isHover: false,
@@ -56,10 +47,32 @@ export class AppComponent implements OnInit {
     }];
 
   }
+  static readonly toolbarHeight = 64;
+  static readonly sideNavWidth = 200;
+  public sideNavWidth = AppComponent.sideNavWidth;
+  private uploadButton: ElementRef<HTMLButtonElement>;
+  public readonly totalSpace = 1024;
+  public totalOccupatedSpace = 0;
+  public uploadTaskDivOpened = false;
+  public uploadTaskDivDetailOpened = true;
+  private readonly folderUrl = 'folder';
+  private auth = ['/login', '/register'];
+  public sideNavOpen = false;
+  public menuEnum = Menu;
+  public menuDetails: MenuDetail[];
+  public uploadButtonCoordinate: [number, number];
+  public uploadTasks: Map<{file: File, isCanceled: boolean, isHover: boolean}, Observable<firebase.storage.UploadTask>> = new Map();
   public ngOnInit(): void {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseKeys);
     }
+    this.contextMenuService.getOpenObservable().subscribe(isContextOpen => {
+      this.uploadTaskDivOpened = isContextOpen;
+    });
+    this.fileListService.calculateTotalSpace();
+    this.fileListService.getTotalSpace().subscribe(totalSpace => {
+      this.totalOccupatedSpace = Math.round(totalSpace * 100) / 100;
+    });
   }
   public onRightClick($event: MouseEvent) {
     $event.preventDefault();

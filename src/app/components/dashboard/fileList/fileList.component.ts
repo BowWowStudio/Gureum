@@ -118,7 +118,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     }
     if (event.target instanceof Element) {
       this.contextMenuTop = event.clientY - AppComponent.toolbarHeight;
-      this.contextMenuLeft = event.clientX ;
+      this.contextMenuLeft = event.clientX - AppComponent.sideNavWidth;
     }
     if (this.isContextMenuOpened) {
       this.isContextMenuOpened = false;

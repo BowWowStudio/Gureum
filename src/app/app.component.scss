@@ -19,7 +19,12 @@ body{
   margin:0px;
 }
 .mat-drawer-container{ overflow: visible; }
-
+.matDrawer{
+  border:none;
+}
+.backgroundWhite{
+  background-color: white;
+}
 .a {
   background-color: darkgray;
 }

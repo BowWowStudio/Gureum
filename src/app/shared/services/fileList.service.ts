@@ -10,7 +10,9 @@ import { HierArchy } from 'src/app/components/dashboard/fileList/fileList.type';
   providedIn: 'root'
 })
 export class FileListService {
+  private MbinByte = 1024 ** 2;
   private db: firebase.firestore.CollectionReference;
+  private totalSpaceSubject: Subject<number> = new Subject<number>();
   constructor(private crypto: CryptoService, private authService: AuthService) {
     this.db = firebase.firestore().collection('document');
   }
@@ -45,5 +47,20 @@ export class FileListService {
       newObservable.next(hierarchy);
     });
     return newObservable.asObservable();
+  }
+  public getTotalSpace(): Observable<number> {
+    return this.totalSpaceSubject.asObservable();
+  }
+  public calculateTotalSpace() {
+    this.authService.getUserObservable().subscribe(async userInfo => {
+      const stoargeRef = firebase.storage().ref(userInfo.uid);
+      const listResult = await stoargeRef.listAll();
+      let total = 0;
+      for (const item of listResult.items) {
+        const metaData = await item.getMetadata();
+        total += metaData.size;
+      }
+      this.totalSpaceSubject.next(total / this.MbinByte);
+    });
   }
 }
