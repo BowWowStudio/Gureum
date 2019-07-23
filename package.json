@@ -31,7 +31,7 @@
     "compodoc:w": "compodoc -p src/tsconfig.app.json --serve --watch",
     "tscov": "tscov -m 90",
     "tscov:d": "tscov --details",
-    "deploy": "firebase deploy"
+    "deploy": "firebase deploy --only hosting"
   },
   "dependencies": {
     "@angular/animations": "^8.1.1",
@@ -48,7 +48,6 @@
     "@angular/platform-server": "^8.1.1",
     "@angular/router": "^8.1.1",
     "@mdi/angular-material": "^3.8.95",
-    "@mdi/js": "^3.8.95",
     "@types/crypto-js": "^3.1.43",
     "@types/file-saver": "^2.0.1",
     "@types/jszip": "^3.1.6",
