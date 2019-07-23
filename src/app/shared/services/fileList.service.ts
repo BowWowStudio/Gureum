@@ -53,14 +53,16 @@ export class FileListService {
   }
   public calculateTotalSpace() {
     this.authService.getUserObservable().subscribe(async userInfo => {
-      const stoargeRef = firebase.storage().ref(userInfo.uid);
-      const listResult = await stoargeRef.listAll();
-      let total = 0;
-      for (const item of listResult.items) {
-        const metaData = await item.getMetadata();
-        total += metaData.size;
+      if(userInfo !== null){
+        const stoargeRef = firebase.storage().ref(userInfo.uid);
+        const listResult = await stoargeRef.listAll();
+        let total = 0;
+        for (const item of listResult.items) {
+          const metaData = await item.getMetadata();
+          total += metaData.size;
+        }
+        this.totalSpaceSubject.next(total / this.MbinByte);
       }
-      this.totalSpaceSubject.next(total / this.MbinByte);
     });
   }
 }

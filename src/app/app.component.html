@@ -45,22 +45,28 @@
                     <input hidden type="file" #uploader (change)="uploadFile($event)" multiple/>
                     <button mat-menu-item>Upload Folder</button>
                 </mat-menu>
-                <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
-                    Upload
-                </button>
+                <div class="uploadDiv">
+                    <button mat-button [matMenuTriggerFor]="appMenu" #uploadButton (click)="updateButtonCoordinate()" class=uploadButton>
+                        New
+                    </button>
+                </div>
                 <mat-list role="list">
                     <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
-                        <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">{{menuDetail.name}}</mat-list-item>
-                        <mat-divider *ngIf="i !== menuDetails.length"></mat-divider>
+                        <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+                            <mat-icon *ngIf="menuDetail.icon" svgIcon="{{menuDetail.icon}}"></mat-icon>
+                            {{menuDetail.name}}
+                        </mat-list-item>
+                        
                     </ng-container>
                     <mat-divider></mat-divider>
                     <mat-list-item>
                         <div fxLayout="column" style="width: 100%">
+                            <mat-icon svgIcon="server"></mat-icon>
                             Storage
                             <mat-progress-bar
                                 class="example-margin"
                                 mode="determinate"
-                                [value]="(totalOccupatedSpace/totalSpace) * 100">
+                                [value]="((totalOccupatedSpace | async)/totalSpace) * 100">
                             </mat-progress-bar>
                         </div>
                     </mat-list-item>

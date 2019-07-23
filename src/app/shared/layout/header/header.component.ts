@@ -49,7 +49,9 @@ export class HeaderComponent {
     public authService: AuthService,
     private alertService: AlertService,
     ) {
-      this.isAuthenticated = this.authService.isAuthenticated()
+      this.authService.isAuthenticated().then(isAuth=>{
+        this.isAuthenticated = isAuth;
+      });
   }
 
   public userUid(): string {

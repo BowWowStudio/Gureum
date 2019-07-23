@@ -86,7 +86,7 @@ export class FileListComponent implements OnInit, OnDestroy {
       this.setIsLoading(false);
     });
   }
-  
+
   public setIsLoading(loading: boolean) {
     this.loading = loading;
   }
@@ -106,9 +106,8 @@ export class FileListComponent implements OnInit, OnDestroy {
     } else {
       this.selectedRow.add(element);
     }
-    console.log(this.selectedRow);
   }
-  
+
   public onFileRightClick(event: MouseEvent, element: FileItem) {
     if (this.selectedRow.has(element)) {
 

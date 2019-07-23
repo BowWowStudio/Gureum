@@ -1,6 +1,6 @@
 <ng-container *ngIf="loading === true; else loaded">
-  <div class="width100Percent height100Percent spinnerDiv" fxLayout="row" fxLayoutAlign="center center">
-    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  <div class="spinnerDiv" fxLayout="row" fxLayoutAlign="center center">
+    <mat-progress-spinner mode="indeterminate" [diameter]="30"></mat-progress-spinner>
   </div>
 </ng-container>
 <ng-template #loaded>

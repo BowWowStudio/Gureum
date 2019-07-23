@@ -1,16 +1,17 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, HostListener, } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, HostListener, AfterContentInit, AfterViewInit, ChangeDetectorRef, } from '@angular/core';
 import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
 import { Menu, MenuDetail, HTMLInputEvent } from '@shared/interfaces/app.type';
 import { AuthService } from '@shared/services/auth.service';
 import { MenuClickService } from '@shared/services/menuClick.service';
 import { FileUploadService } from '@shared/services/fileUpload.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatIconRegistry } from '@angular/material';
 import { NewFolderDialogComponent } from './components/dashboard/fileList/newFolderDialog/newFolderDialog.component';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ContextMenuService } from '@shared/services/ContextMenu.service';
 import { FileListService } from '@shared/services/fileList.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: "app-root",
@@ -18,7 +19,7 @@ import { FileListService } from '@shared/services/fileList.service';
   styleUrls: ['./app.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('uploadButton', {read: ElementRef, static: false}) set uploadButtonElement(uploadButton: ElementRef<HTMLButtonElement>) {
     if (uploadButton !== undefined && uploadButton !== null) {
       this.uploadButton = uploadButton;
@@ -28,41 +29,58 @@ export class AppComponent implements OnInit {
   constructor(private route: Router, private authService: AuthService,
      private menuService: MenuClickService, private fileUploadService: FileUploadService,
      public dialog: MatDialog, private activatedRoute: ActivatedRoute, private contextMenuService: ContextMenuService,
-     private fileListService: FileListService) {
+     private fileListService: FileListService, private changeDetectorRef :ChangeDetectorRef, private matIconRegistry: MatIconRegistry, 
+     private domSanitizer: DomSanitizer ) {
     this.menuDetails = [ {
       name: 'My Drive',
       isHover: false,
       url: ['dashboard', 'main'],
       corresMenu: Menu.MAIN,
+      icon: 'harddisk',
     }, {
       name: 'Shared',
       isHover: false,
       url: ['dashboard', 'shared'],
       corresMenu: Menu.SHARE,
+      icon: 'account-multiple-outline',
     }, {
       name: 'Recent',
       isHover: false,
       url: ['dashboard', 'recent'],
       corresMenu: Menu.RECENT,
+      icon: 'clock-outline',
+    }, {
+      name: 'Starred',
+      isHover: false,
+      url: ['dashboard', 'star'],
+      corresMenu: Menu.STARRED,
+      icon: 'star-outline',
+    }, {
+      name: 'Bin',
+      isHover: false,
+      url: ['dashboard', 'bin'],
+      corresMenu: Menu.BIN,
+      icon: 'trash-can-outline',
     }];
-
   }
   static readonly toolbarHeight = 64;
-  static readonly sideNavWidth = 200;
+  static readonly sideNavWidth = 250;
   public sideNavWidth = AppComponent.sideNavWidth;
   private uploadButton: ElementRef<HTMLButtonElement>;
   public readonly totalSpace = 1024;
-  public totalOccupatedSpace = 0;
+  public totalOccupatedSpaceSubject : Subject<number>= new Subject();
+  public totalOccupatedSpace :Observable<number>;
   public uploadTaskDivOpened = false;
   public uploadTaskDivDetailOpened = true;
   private readonly folderUrl = 'folder';
-  private auth = ['/login', '/register'];
+  private auth = ['/login', '/register' , '/'];
   public sideNavOpen = false;
   public menuEnum = Menu;
   public menuDetails: MenuDetail[];
   public uploadButtonCoordinate: [number, number];
   public uploadTasks: Map<{file: File, isCanceled: boolean, isHover: boolean}, Observable<firebase.storage.UploadTask>> = new Map();
   public ngOnInit(): void {
+    this.totalOccupatedSpace = this.totalOccupatedSpaceSubject.asObservable();
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseKeys);
     }
@@ -71,8 +89,11 @@ export class AppComponent implements OnInit {
     });
     this.fileListService.calculateTotalSpace();
     this.fileListService.getTotalSpace().subscribe(totalSpace => {
-      this.totalOccupatedSpace = Math.round(totalSpace * 100) / 100;
+      this.totalOccupatedSpaceSubject.next(Math.round(totalSpace * 100) / 100);
+      this.changeDetectorRef.detectChanges();
     });
+  }
+  public ngAfterViewInit(): void {
   }
   public onRightClick($event: MouseEvent) {
     $event.preventDefault();
@@ -127,7 +148,6 @@ export class AppComponent implements OnInit {
     }
     for (let i = 0; i !== event.target.files.length; i += 1) {
       const file = event.target.files.item(i);
-      console.log(file);
       this.uploadTasks.set({file: file, isCanceled: false, isHover: false}, (this.fileUploadService.fileUpload(file, hash)));
     }
   }

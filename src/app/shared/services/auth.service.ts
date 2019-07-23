@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public token: string;
   private db: firebase.firestore.Firestore;
-  private userSubject :Subject<firebase.User> = new Subject<firebase.User>();
+  private userSubject: Subject<firebase.User> = new BehaviorSubject<firebase.User>(null);
   constructor(
     private router: Router,
     private auth: AngularFireAuth) {
@@ -33,7 +33,6 @@ export class AuthService {
   public async login(email: string, password: string): Promise<firebase.auth.UserCredential> {
     try {
       const credential = await this.auth.auth.signInWithEmailAndPassword(email, password);
-      this.userSubject.next(credential.user);
       return credential;
     } catch (err) {
       throw err;
@@ -63,10 +62,17 @@ export class AuthService {
   public getUserObservable(): Observable<firebase.User> {
     return this.userSubject.asObservable();
   }
-  public isAuthenticated(): string {
-    if (firebase.auth().currentUser) {
-      return 'true';
-    }
-    return sessionStorage.getItem('session-alive');
+  public isAuthenticated(): Promise<string> {
+    return new Promise(resolve => {
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log(user);
+        if (user) {
+          this.userSubject.next(user);
+          resolve('true');
+        } else {
+          resolve('false');
+        }
+      });
+    });
   }
 }
