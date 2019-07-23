@@ -18,6 +18,39 @@ body{
   height:100%;
   margin:0px;
 }
+#toolbarRow{
+  background: white;
+  span{
+    color: #323232;
+    font-size: 2em;
+  }
+  .logo{
+    width:100px;
+    padding-right:10px;
+  }
+  border-bottom: 1px solid #323232;
+}
+.searchBar{
+  margin-left: 50px;
+  background: #f1f3f4;
+  border: 1px solid transparent;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  margin-right: auto;
+  max-width: 720px;
+  position: relative;
+  -webkit-transition: background 100ms ease-in,width 100ms ease-out;
+  transition: background 100ms ease-in,width 100ms ease-out;
+  .searchBarInput{
+    font-size: 16px;
+    background: transparent;
+    border:0px;
+    width:700px;
+  }
+  .searchBarInput:focus{
+    outline: none;
+  }
+}
 .mat-drawer-container{ overflow: visible; }
 .matDrawer{
   border:none;

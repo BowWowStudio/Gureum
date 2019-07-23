@@ -20,13 +20,13 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
   this.db = firebase.firestore();
 }
   public async newFolder(name, parentFolderDocId = null): Promise<void> {
-    const uid = this.authService.getUserObservable().subscribe(async user=>{
+    this.authService.getUserObservable().subscribe(async user=>{
       const uid = user.uid;
       const docId = this.crypto.findFolderHash(name, uid, new Date());
       let newFolder: FileDataStore;
       const documentRef = this.db.collection('document');
       newFolder = {
-        bucket : this.ref.bucket,
+        bucket : firebase.storage().ref(user.uid).bucket,
         isFolder : true,
         name : name,
         owner : uid,
