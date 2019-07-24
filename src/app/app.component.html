@@ -50,24 +50,25 @@
                         New
                     </button>
                 </div>
-                <mat-list role="list">
+                <mat-list role="list" id="menuList">
                     <ng-container *ngFor="let menuDetail of menuDetails; let i=index;">
                         <mat-list-item (click)="navigate(menuDetail.corresMenu)" [ngClass]="{'a': menuDetail.isHover, 'menuButton':true}" (mouseenter)="menuDetail.isHover = true" (mouseleave)="menuDetail.isHover = false"  [routerLink]="'/'+menuDetail.url.join('/')" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
                             <mat-icon *ngIf="menuDetail.icon" svgIcon="{{menuDetail.icon}}"></mat-icon>
-                            {{menuDetail.name}}
+                            <span class="menuDetailName">{{menuDetail.name}}</span>
                         </mat-list-item>
-                        
                     </ng-container>
                     <mat-divider></mat-divider>
                     <mat-list-item>
-                        <div fxLayout="column" style="width: 100%">
+                        <div fxLayout="row" style="width: 100%">
                             <mat-icon svgIcon="server"></mat-icon>
-                            Storage
-                            <mat-progress-bar
-                                class="example-margin"
-                                mode="determinate"
-                                [value]="((totalOccupatedSpace | async)/totalSpace) * 100">
-                            </mat-progress-bar>
+                            <div fxLayout="column" style="width: 100%" class="menuDetailName">
+                                <span>Storage</span>
+                                <mat-progress-bar
+                                    class="example-margin"
+                                    mode="determinate"
+                                    [value]="((totalOccupatedSpace | async)/totalSpace) * 100">
+                                </mat-progress-bar>
+                            </div>
                         </div>
                     </mat-list-item>
                 </mat-list>

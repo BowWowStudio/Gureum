@@ -82,8 +82,10 @@ export class FileListComponent implements OnInit, OnDestroy {
   }
   private dataInit(uid: string, hash: string = null) {
     this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(result => {
-      this.dataSource.data = result;
-      this.setIsLoading(false);
+      if (result !== null) {
+        this.dataSource.data = result;
+        this.setIsLoading(false);
+      }
     });
   }
 

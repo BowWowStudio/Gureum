@@ -1,4 +1,13 @@
-
+%selectNone{
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+#toolbarRow{
+  @extend %selectNone;
+}
 .app-content {
   padding: 20px;
 }
@@ -158,4 +167,14 @@ body{
 
 .example-spacer {
   flex: 1 1 auto;
+}
+
+.menuDetailName{
+  margin-left: 10px;
+}
+#menuList{
+  @extend %selectNone;
+  mat-divider{
+    margin: 10px 10px;
+  }
 }

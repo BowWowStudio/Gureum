@@ -3,7 +3,7 @@ import { CryptoService } from './Crypto.service';
 import { AuthService } from './auth.service';
 import * as firebase from 'firebase';
 import { FileDataStore } from '@shared/interfaces/FileDataStore.type';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { HierArchy } from 'src/app/components/dashboard/fileList/fileList.type';
 
 @Injectable({
@@ -13,13 +13,21 @@ export class FileListService {
   private MbinByte = 1024 ** 2;
   private db: firebase.firestore.CollectionReference;
   private totalSpaceSubject: Subject<number> = new Subject<number>();
+  private readonly fileListSubject = new BehaviorSubject<FileDataStore[]>(null);
   constructor(private crypto: CryptoService, private authService: AuthService) {
     this.db = firebase.firestore().collection('document');
   }
+  public deleteFromFileList(docId: string) {
+    this.fileListSubject.subscribe(fileLists => {
+      if (fileLists.some(fileList => fileList.hash === docId)) {
+        const newFileList = fileLists.filter(fileList => fileList.hash !== docId);
+        this.fileListSubject.next(newFileList);
+      }
+    });
+  }
   public fileDataStoreToFileListDetail(uid: string, folderId: string = null): Observable<FileDataStore[]> {
-    const newObservable = new Subject<FileDataStore[]>();
     this.db.where('owner', '==', uid).where('parent', '==', folderId).get().then(querysnapshot => {
-      newObservable.next(
+      this.fileListSubject.next(
         querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort((a, b) => {
           if (a.isFolder && b.isFolder) {
             return 0;
@@ -30,7 +38,7 @@ export class FileListService {
           }})
       );
     });
-    return newObservable.asObservable();
+    return this.fileListSubject.asObservable();
   }
   public getHierarchy(folderId: string): Observable<HierArchy[]> {
     const newObservable = new Subject<HierArchy[]>();
@@ -53,7 +61,7 @@ export class FileListService {
   }
   public calculateTotalSpace() {
     this.authService.getUserObservable().subscribe(async userInfo => {
-      if(userInfo !== null){
+      if (userInfo !== null) {
         const stoargeRef = firebase.storage().ref(userInfo.uid);
         const listResult = await stoargeRef.listAll();
         let total = 0;
