@@ -8,6 +8,9 @@ import { ShareComponent } from './components/dashboard/share/share.component';
 import { LoginGuardService } from '@shared/services/login-guard.service';
 import { ProfileComponent } from './components/dashboard/profile/profile.component';
 import { FileListComponent } from './components/dashboard/fileList/fileList.component';
+import { BinComponent } from './components/dashboard/bin/bin.component';
+import { RecentComponent } from './components/dashboard/recent/recent.component';
+import { StarComponent } from './components/dashboard/star/star.component';
 
 // Protected
 
@@ -25,6 +28,9 @@ const appRoutes: Routes = [
     {path: 'main', component: FileListComponent },
     {path: 'shared', component: ShareComponent},
     {path: 'profile', component: ProfileComponent},
+    {path: 'bin', component: BinComponent},
+    {path: 'recent', component: RecentComponent},
+    {path: 'star', component: StarComponent},
   ]
 },
 

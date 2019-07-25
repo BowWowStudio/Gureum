@@ -3,7 +3,6 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-
 @Injectable()
 export class AuthService {
   public token: string;
@@ -73,6 +72,15 @@ export class AuthService {
           resolve('false');
         }
       });
+    });
+  }
+  public async getUserName(uid: string): Promise<string> {
+    console.log(uid);
+    return new Promise<string>(async resolve => {
+      const returnSubject = new Subject<string>();
+      const docRef = this.db.collection('users').doc(uid);
+      const name = (await docRef.get()).data().name;
+      resolve(name);
     });
   }
 }

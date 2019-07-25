@@ -8,9 +8,10 @@ import { MatDialog } from '@angular/material';
 import { FileListService } from '@shared/services/fileList.service';
 import { AppComponent } from 'src/app/app.component';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
-  selector: "app-fileList",
+  selector: 'app-fileList',
   templateUrl: './fileList.component.html',
   styleUrls: ['./fileList.component.scss'],
   animations: [
@@ -42,6 +43,7 @@ export class FileListComponent implements OnInit, OnDestroy {
   public fileLists: FileItem[];
   public hierarchies: HierArchy[] = [{ hash: null, name: 'My Drive' }];
   public loading;
+  private subscriptions: Subscription[] = [];
   public datas: FileItem[];
   public displayedColumns: string[] = ['name', 'owner'];
   public columnCellName: Map<string, string> = new Map([
@@ -59,34 +61,40 @@ export class FileListComponent implements OnInit, OnDestroy {
   @HostListener('click') leftClick() {
     this.isContextMenuOpened = false;
   }
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+  }
 
   ngOnInit() {
     this.setIsLoading(true);
-    this.auth.getUserObservable().subscribe(user => {
+    this.subscriptions.push(this.auth.getUserObservable().subscribe(user => {
       if (this.route.url.includes(this.folderUrl)) {
         // If this is not the root directory
-        this.activatedRoute.paramMap.subscribe(async paramMap => {
+        this.subscriptions.push(this.activatedRoute.paramMap.subscribe(async paramMap => {
           const hash = paramMap.get('hash');
           this.fileListService.getHierarchy(hash).subscribe(hierarchies => {
             this.hierarchies = hierarchies;
             this.dataInit(user.uid, hash);
           });
-        });
+        }));
       } else {
         // if this is the root directory
         this.dataInit(user.uid);
       }
-    });
-
+    }));
   }
+
+  // TODO: fix this
   private dataInit(uid: string, hash: string = null) {
-    this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(result => {
+    this.subscriptions.push(this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(async result => {
       if (result !== null) {
+        for (const item of result) {
+          item.owner = await this.auth.getUserName(item.owner);
+        }
         this.dataSource.data = result;
         this.setIsLoading(false);
+        this.subscriptions.forEach(subscription => {subscription.unsubscribe(); });
       }
-    });
+    }));
   }
 
   public setIsLoading(loading: boolean) {
