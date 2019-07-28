@@ -13,7 +13,6 @@ export class LoginGuardService implements CanActivate {
   ): Promise<boolean> {
     return new Promise((resolve)=>{
       this.authService.isAuthenticated().then(isAuth=>{
-        console.log(isAuth);
         if (isAuth === 'true') {
           this.router.navigate(['/dashboard']);
           resolve(false);

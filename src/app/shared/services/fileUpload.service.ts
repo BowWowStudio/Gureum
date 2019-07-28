@@ -20,7 +20,7 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
   this.db = firebase.firestore();
 }
   public async newFolder(name, parentFolderDocId = null): Promise<void> {
-    this.authService.getUserObservable().subscribe(async user=>{
+    this.authService.getUserPromise().then(async user => {
       const uid = user.uid;
       const docId = this.crypto.findFolderHash(name, uid, new Date());
       let newFolder: FileDataStore;
@@ -32,6 +32,8 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
         owner : uid,
         parent: parentFolderDocId,
         hash: docId,
+        isDeleted: false,
+        star: false,
       };
       documentRef.doc(docId).set(newFolder);
     });
@@ -39,7 +41,7 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
   public fileUpload(file: File, parentFolderDocId = null): Observable<firebase.storage.UploadTask> {
     this.contextMenuService.setOpen(true);
     const subject = new Subject<firebase.storage.UploadTask>();
-    this.authService.getUserObservable().subscribe(async user => {
+    this.authService.getUserPromise().then(async user => {
        const ref = firebase.storage().ref(user.uid);
        const hash = await this.crypto.findHash(file, new Date().toUTCString());
        const uploadTask = ref.child(hash).put(file);
@@ -50,6 +52,8 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
          name : file.name,
          owner : user.uid,
          parent : parentFolderDocId,
+         isDeleted: false,
+         star: false,
        };
        subject.next(uploadTask);
        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, () => {subject.next(uploadTask); }, null, async () => {
@@ -58,9 +62,17 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
     });
     return subject.asObservable();
   }
+  public async moveToBin(files: Set<FileItem>): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      for await (const file of Array.from(files)) {
+        this.db.collection('document').doc(file.hash).update({ isDeleted: true });
+      }
+      resolve(true);
+    });
+  }
   public async fileDelete(files: Set<FileItem>) {
     for await(const file of Array.from(files)) {
-      this.authService.getUserObservable().subscribe(async user => {
+      this.authService.getUserPromise().then(async user => {
         this.db.collection('document').doc(file.hash).delete();
         firebase.storage().ref(user.uid).child(file.hash).delete();
       });

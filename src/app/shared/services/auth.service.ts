@@ -58,13 +58,16 @@ export class AuthService {
       );
     return this.token;
   }
-  public getUserObservable(): Observable<firebase.User> {
-    return this.userSubject.asObservable();
+  public getUserPromise(): Promise<firebase.User> {
+    return new Promise(resolve => {
+      this.userSubject.asObservable().subscribe(user => {
+        resolve(user);
+      });
+    });
   }
   public isAuthenticated(): Promise<string> {
     return new Promise(resolve => {
       firebase.auth().onAuthStateChanged((user) => {
-        console.log(user);
         if (user) {
           this.userSubject.next(user);
           resolve('true');
@@ -75,7 +78,6 @@ export class AuthService {
     });
   }
   public async getUserName(uid: string): Promise<string> {
-    console.log(uid);
     return new Promise<string>(async resolve => {
       const returnSubject = new Subject<string>();
       const docRef = this.db.collection('users').doc(uid);

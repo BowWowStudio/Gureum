@@ -46,7 +46,7 @@ export class ContextMenuComponent implements OnInit {
     this.fileUploadService.fileDownload(this.fileItems);
   }
   public deleteFiles() {
-    this.fileUploadService.fileDelete(this.fileItems).then(() => {
+    this.fileUploadService.moveToBin(this.fileItems).then(() => {
       this.fileItems.forEach(fileItem => {
         this.fileListService.deleteFromFileList(fileItem.hash);
       });

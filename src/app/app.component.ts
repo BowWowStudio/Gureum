@@ -142,6 +142,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
   public async uploadFile(event: HTMLInputEvent) {
+    console.log('uploadFile');
     let hash = null;
     if (this.route.url.includes(this.folderUrl)) {
       hash = this.getHashFromURL(this.route.url);

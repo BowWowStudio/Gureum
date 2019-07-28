@@ -45,10 +45,10 @@ export class FileListComponent implements OnInit, OnDestroy {
   public loading;
   private subscriptions: Subscription[] = [];
   public datas: FileItem[];
-  public displayedColumns: string[] = ['name', 'owner'];
+  public displayedColumns: string[] = ['name', 'ownerName'];
   public columnCellName: Map<string, string> = new Map([
     ['name', 'Name'],
-    ['owner', 'Owner'],
+    ['ownerName', 'Owner'],
     // ['lastModified', 'Last Modified'],
     // ['size', 'Size']
   ]);
@@ -62,11 +62,14 @@ export class FileListComponent implements OnInit, OnDestroy {
     this.isContextMenuOpened = false;
   }
   ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.fileListService.setFileListNull();
   }
 
   ngOnInit() {
     this.setIsLoading(true);
-    this.subscriptions.push(this.auth.getUserObservable().subscribe(user => {
+    console.log(true);
+    this.auth.getUserPromise().then(user => {
       if (this.route.url.includes(this.folderUrl)) {
         // If this is not the root directory
         this.subscriptions.push(this.activatedRoute.paramMap.subscribe(async paramMap => {
@@ -80,19 +83,16 @@ export class FileListComponent implements OnInit, OnDestroy {
         // if this is the root directory
         this.dataInit(user.uid);
       }
-    }));
+    });
   }
 
-  // TODO: fix this
   private dataInit(uid: string, hash: string = null) {
-    this.subscriptions.push(this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(async result => {
+    this.subscriptions.push(this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(result => {
+      console.log(result);
       if (result !== null) {
-        for (const item of result) {
-          item.owner = await this.auth.getUserName(item.owner);
-        }
         this.dataSource.data = result;
         this.setIsLoading(false);
-        this.subscriptions.forEach(subscription => {subscription.unsubscribe(); });
+        console.log('false');
       }
     }));
   }

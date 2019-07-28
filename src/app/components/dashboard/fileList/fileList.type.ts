@@ -6,8 +6,6 @@ export interface FileItem {
   lastModified?: Date;
   size?: number;
   hash?: string;
-  isDeleted: boolean;
-  star: boolean;
 }
 export interface MetaData {
   bucket: string;
