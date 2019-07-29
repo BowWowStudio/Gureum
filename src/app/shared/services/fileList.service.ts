@@ -15,14 +15,18 @@ export class FileListService {
   private totalSpaceSubject: Subject<number> = new Subject<number>();
   private readonly fileListSubject = new BehaviorSubject<FileDataStore[]>(null);
   private readonly binFileListSubject = new BehaviorSubject<FileDataStore[]>(null);
+  private readonly starFileListSubject = new BehaviorSubject<FileDataStore[]>(null);
   constructor(private crypto: CryptoService, private authService: AuthService) {
     this.db = firebase.firestore().collection('document');
   }
   public setFileListNull() {
     this.fileListSubject.next(null);
   }
-  public setBinFileListNumm(){
+  public setBinFileListNull() {
     this.binFileListSubject.next(null);
+  }
+  public setStarFileListNull(){
+    this.starFileListSubject.next(null);
   }
   private sortFunc() {
     return (a, b) => {
@@ -51,23 +55,42 @@ export class FileListService {
       }
     });
   }
+  public deleteFromStarFileList(docId: string) {
+    this.starFileListSubject.subscribe(fileLists => {
+      if (fileLists !== null && fileLists.some(fileList => fileList.hash === docId)) {
+        const newFileList = fileLists.filter(fileList => fileList.hash !== docId);
+        this.starFileListSubject.next(newFileList);
+      }
+    });
+  }
   public fileDataStoreToFileListDetail(uid: string, folderId: string = null): Observable<FileDataStore[]> {
     this.db.where('owner', '==', uid).where('parent', '==', folderId).where('isDeleted', '==', false).get().then(querysnapshot => {
       const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc());
       const namePromises = [];
       datas.forEach(data => namePromises.push(this.authService.getUserName(uid).then(name => data.ownerName = name)));
-      Promise.all(namePromises).then(()=>{
+      Promise.all(namePromises).then(() => {
         this.fileListSubject.next(datas);
       });
     });
     return this.fileListSubject.asObservable();
   }
-  public getDeletedFiles(uid: string): Observable<FileDataStore[]> {
-    this.db.where('owner', '==', uid).where('isDeleted', '==', true).get().then(querysnapshot => {
-      const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc())
+  public getStaredFiles(uid: string): Observable<FileDataStore[]> {
+    this.db.where('owner', '==', uid).where('isDeleted', '==', false).where('star', '==', true).get().then(querysnapshot => {
+      const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc());
       const namePromises = [];
       datas.forEach(data => namePromises.push(this.authService.getUserName(uid).then(name => data.ownerName = name)));
-      Promise.all(namePromises).then(()=>{
+      Promise.all(namePromises).then(() => {
+        this.starFileListSubject.next(datas);
+      });
+    });
+    return this.starFileListSubject.asObservable();
+  }
+  public getDeletedFiles(uid: string): Observable<FileDataStore[]> {
+    this.db.where('owner', '==', uid).where('isDeleted', '==', true).get().then(querysnapshot => {
+      const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc());
+      const namePromises = [];
+      datas.forEach(data => namePromises.push(this.authService.getUserName(uid).then(name => data.ownerName = name)));
+      Promise.all(namePromises).then(() => {
         this.binFileListSubject.next(datas);
       });
     });

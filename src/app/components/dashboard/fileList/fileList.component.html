@@ -28,7 +28,7 @@
           <table mat-table [dataSource]="dataSource" matSort class="width100Percent">
             <ng-container *ngFor="let column of displayedColumns" matColumnDef={{column}}>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnCellName.get(column)}} </th>
-              <td mat-cell *matCellDef="let element" [ngClass]="{'selected': selectedRow.has(element)}" (click)="toggleSelect(element, $event)" class="fileCell" (contextmenu)="onFileRightClick($event, element)">
+              <td mat-cell *matCellDef="let element" [ngClass]="{'selected': selectedRow.has(element)}" (click)="toggleSelect(element, $event)" class="fileCell {{column}}" (contextmenu)="onFileRightClick($event, element)">
                 <div fxLayout="row" fxLayoutAlign="start center">
                   <ng-container *ngIf="column === 'name' ; else notNameColumnTemplate">
                     <ng-container *ngIf="element.isFolder; else fileTemplate">
@@ -44,7 +44,7 @@
                     {{element[column]}}
                   </span>
                   <ng-container *ngIf="column === 'name'">
-                      <mat-icon *ngIf="element.star">star</mat-icon>
+                      <mat-icon *ngIf="element.star" class="star">star</mat-icon>
                   </ng-container>
                 </div>
               </td>

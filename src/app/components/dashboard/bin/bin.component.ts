@@ -28,8 +28,6 @@ import { AppComponent } from 'src/app/app.component';
   ],
 })
 export class BinComponent implements OnInit, OnDestroy {
-
-
   public loading = true;
   public dataSource = new MatTableDataSource();
   public displayedColumns: string[] = ['name', 'ownerName'];
@@ -50,7 +48,7 @@ export class BinComponent implements OnInit, OnDestroy {
     private fileListService: FileListService, ) { }
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
-    this.fileListService.setBinFileListNumm();
+    this.fileListService.setBinFileListNull();
   }
   ngOnInit() {
     this.auth.getUserPromise().then(user => {

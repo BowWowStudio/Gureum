@@ -14,7 +14,7 @@
   </button>
   <button mat-menu-item (click)="setStar()">
     <mat-icon>star</mat-icon>
-    <span>Star</span>
+    <span>Toggle Star</span>
   </button>
   <button mat-menu-item>
     <mat-icon>create</mat-icon>
@@ -46,6 +46,10 @@
       <mat-icon>swap_horiz</mat-icon>
       <span>Move to</span>
     </button>
+    <button mat-menu-item (click)="setStar()">
+      <mat-icon>star</mat-icon>
+      <span>Toggle Star</span>
+    </button>
     <button mat-menu-item>
       <mat-icon>palette</mat-icon>
       <span>Change color</span>
@@ -69,6 +73,10 @@
     <button mat-menu-item>
       <mat-icon>swap_horiz</mat-icon>
       <span>Move to</span>
+    </button>
+    <button mat-menu-item (click)="setStar()">
+      <mat-icon>star</mat-icon>
+      <span>Toggle Star</span>
     </button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="downloadFiles()">

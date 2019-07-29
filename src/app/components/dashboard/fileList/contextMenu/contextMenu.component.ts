@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, Input, HostBinding, ChangeDetectorRef, HostListener, Output, EventEmitter } from '@angular/core';
 import { FileItem } from '../fileList.type';
 import { FileUploadService } from '@shared/services/fileUpload.service';
 import { FileListService } from '@shared/services/fileList.service';
@@ -23,7 +23,8 @@ export class ContextMenuComponent implements OnInit {
   constructor(private changeDetector: ChangeDetectorRef, private fileUploadService: FileUploadService,
     private fileListService: FileListService) { }
   @Input() fileItems: Set<FileItem> = new Set();
-
+  @Output() itemClicked = new EventEmitter();
+  @Output() toggleStarClicked = new EventEmitter();
   @HostBinding('style.top.px')
   public styleTop = 0;
   @HostBinding('style.left.px')
@@ -44,12 +45,14 @@ export class ContextMenuComponent implements OnInit {
   }
   public downloadFiles() {
     this.fileUploadService.fileDownload(this.fileItems);
+    this.itemClicked.emit();
   }
   public deleteFiles() {
     this.fileUploadService.moveToBin(this.fileItems).then(() => {
       this.fileItems.forEach(fileItem => {
         this.fileListService.deleteFromFileList(fileItem.hash);
       });
+      this.itemClicked.emit();
     });
   }
   public setStar() {
@@ -57,6 +60,8 @@ export class ContextMenuComponent implements OnInit {
       for (const fileItem of Array.from(this.fileItems)) {
         fileItem.star = !fileItem.star;
       }
+      this.toggleStarClicked.emit();
+      this.itemClicked.emit();
     });
   }
 }
