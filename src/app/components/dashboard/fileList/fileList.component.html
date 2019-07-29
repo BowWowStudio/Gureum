@@ -25,10 +25,10 @@
       </ng-container>
       <ng-template #folderNotEmpty>
         <div class="fileListTableDiv">
-          <table mat-table [dataSource]="dataSource" matSort class="width100Percent">
+          <table mat-table [dataSource]="dataSource" matSort class="width100Percent" cdkDropList cdkDropListSortingDisabled>
             <ng-container *ngFor="let column of displayedColumns" matColumnDef={{column}}>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columnCellName.get(column)}} </th>
-              <td mat-cell *matCellDef="let element" [ngClass]="{'selected': selectedRow.has(element)}" (click)="toggleSelect(element, $event)" class="fileCell {{column}}" (contextmenu)="onFileRightClick($event, element)">
+              <td mat-cell *matCellDef="let element" [ngClass]="{'selected': selectedRow.has(element)}" (click)="toggleSelect(element, $event)" class="fileCell {{column}}" (contextmenu)="onFileRightClick($event, element)" >
                 <div fxLayout="row" fxLayoutAlign="start center">
                   <ng-container *ngIf="column === 'name' ; else notNameColumnTemplate">
                     <ng-container *ngIf="element.isFolder; else fileTemplate">
@@ -50,7 +50,12 @@
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" cdkDrag>
+              
+                <div class="drag-box" *cdkDragPreview >
+                  <span>{{row.name}}</span>
+                </div>
+            </tr>
           </table>
         </div>
       </ng-template>   

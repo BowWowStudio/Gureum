@@ -1,6 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
@@ -32,6 +33,7 @@ import { BinContextMenuComponent } from './bin/binContextMenu/binContextMenu.com
   imports: [
     CommonModule,
     BrowserModule,
+    DragDropModule,
     FormsModule,
     MatButtonModule,
     MatInputModule,
