@@ -21,6 +21,9 @@ export class FileListService {
   public setFileListNull() {
     this.fileListSubject.next(null);
   }
+  public setBinFileListNumm(){
+    this.binFileListSubject.next(null);
+  }
   private sortFunc() {
     return (a, b) => {
       if (a.isFolder && b.isFolder) {
@@ -42,7 +45,7 @@ export class FileListService {
   }
   public deleteFromBinFileList(docId: string) {
     this.binFileListSubject.subscribe(fileLists => {
-      if (fileLists.some(fileList => fileList.hash === docId)) {
+      if (fileLists !== null && fileLists.some(fileList => fileList.hash === docId)) {
         const newFileList = fileLists.filter(fileList => fileList.hash !== docId);
         this.binFileListSubject.next(newFileList);
       }

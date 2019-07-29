@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FileItem } from '../fileList/fileList.type';
 import { Router } from '@angular/router';
@@ -27,7 +27,8 @@ import { AppComponent } from 'src/app/app.component';
     ]),
   ],
 })
-export class BinComponent implements OnInit {
+export class BinComponent implements OnInit, OnDestroy {
+
 
   public loading = true;
   public dataSource = new MatTableDataSource();
@@ -47,7 +48,10 @@ export class BinComponent implements OnInit {
     private auth: AuthService,
     public route: Router,
     private fileListService: FileListService, ) { }
-
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.fileListService.setBinFileListNumm();
+  }
   ngOnInit() {
     this.auth.getUserPromise().then(user => {
       this.subscriptions.push(this.fileListService.getDeletedFiles(user.uid).subscribe(async result => {
@@ -56,7 +60,7 @@ export class BinComponent implements OnInit {
           this.loading = false;
         }
       }));
-    })
+    });
   }
   public toggleSelect(element: FileItem, event: KeyboardEvent) {
     if (!event.ctrlKey) {
@@ -98,7 +102,7 @@ export class BinComponent implements OnInit {
   public onRightClick(event: MouseEvent) {
     event.preventDefault();
   }
-  public closeContextMenu(){
+  public closeContextMenu() {
     this.isContextMenuOpened = false;
   }
 }
