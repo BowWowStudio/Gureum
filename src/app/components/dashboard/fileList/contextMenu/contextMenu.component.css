@@ -2,13 +2,10 @@
     top:0px;
     display: block;
     left: 0px;
-    max-height: 323px;
     /* // opacity: .01; */
     overflow: visible;
     position: absolute;
     z-index: 1001;
-    height:300px;
-    width:300px;
     background: #fff;
     border: none;
     -webkit-border-radius: 2px;

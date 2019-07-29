@@ -83,6 +83,14 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
       resolve(true);
     });
   }
+  public async setStarFiles(files: Set<FileItem>): Promise<boolean>{
+    return new Promise(async (resolve) => {
+      for await (const file of Array.from(files)) {
+        this.db.collection('document').doc(file.hash).update({ star: !file.star });
+      }
+      resolve(true);
+    });
+  }
   public async fileUploadCancel(uploadTask: firebase.storage.UploadTask) {
     uploadTask.cancel();
   }

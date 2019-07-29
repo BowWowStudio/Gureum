@@ -27,7 +27,6 @@ import { BinComponent } from './bin/bin.component';
 import { RecentComponent } from './recent/recent.component';
 import { StarComponent } from './star/star.component';
 import { BinContextMenuComponent } from './bin/binContextMenu/binContextMenu.component';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
@@ -47,8 +46,6 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform
     MatTableModule,
     MatMenuModule,
     MatDialogModule,
-    BrowserAnimationsModule,
-    NoopAnimationsModule
   ],
   declarations: [
     ShareComponent,

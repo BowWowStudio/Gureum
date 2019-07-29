@@ -19,7 +19,9 @@
           </mat-menu>
     </mat-card-header>
       <ng-container *ngIf="dataSource.data.length === 0; else folderNotEmpty">
-        <h1>This folder is Empty</h1>
+        <div fxLayoutAlign="center center">
+          <span>This folder is Empty</span>
+        </div>
       </ng-container>
       <ng-template #folderNotEmpty>
         <div class="fileListTableDiv">
@@ -41,6 +43,9 @@
                   <span>
                     {{element[column]}}
                   </span>
+                  <ng-container *ngIf="column === 'name'">
+                      <mat-icon *ngIf="element.star">star</mat-icon>
+                  </ng-container>
                 </div>
               </td>
             </ng-container>

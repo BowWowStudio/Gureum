@@ -6,7 +6,9 @@
 <ng-template #loaded>
   <mat-card class="width100Percent height100Percent fileListCard" (contextmenu)="onRightClick($event)">
       <ng-container *ngIf="dataSource.data.length === 0; else folderNotEmpty">
-        <h1>This folder is Empty</h1>
+        <div class="emptyIndicator" fxLayoutAlign="center center">
+            <span>Move Unwanted files to the <b>Bin</b></span>
+        </div>
       </ng-container>
       <ng-template #folderNotEmpty>
         <div class="fileListTableDiv">

@@ -6,6 +6,7 @@ export interface FileItem {
   lastModified?: Date;
   size?: number;
   hash?: string;
+  star: boolean;
 }
 export interface MetaData {
   bucket: string;

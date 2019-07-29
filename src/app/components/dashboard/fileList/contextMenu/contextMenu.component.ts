@@ -52,4 +52,11 @@ export class ContextMenuComponent implements OnInit {
       });
     });
   }
+  public setStar() {
+    this.fileUploadService.setStarFiles(this.fileItems).then(() => {
+      for (const fileItem of Array.from(this.fileItems)) {
+        fileItem.star = !fileItem.star;
+      }
+    });
+  }
 }
