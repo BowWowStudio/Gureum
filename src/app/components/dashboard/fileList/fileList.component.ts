@@ -68,7 +68,6 @@ export class FileListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.setIsLoading(true);
-    console.log(true);
     this.auth.getUserPromise().then(user => {
       if (this.route.url.includes(this.folderUrl)) {
         // If this is not the root directory
@@ -88,11 +87,9 @@ export class FileListComponent implements OnInit, OnDestroy {
 
   private dataInit(uid: string, hash: string = null) {
     this.subscriptions.push(this.fileListService.fileDataStoreToFileListDetail(uid, hash).subscribe(result => {
-      console.log(result);
       if (result !== null) {
         this.dataSource.data = result;
         this.setIsLoading(false);
-        console.log('false');
       }
     }));
   }

@@ -68,8 +68,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public sideNavWidth = AppComponent.sideNavWidth;
   private uploadButton: ElementRef<HTMLButtonElement>;
   public readonly totalSpace = 1024;
-  public totalOccupatedSpaceSubject : Subject<number>= new Subject();
-  public totalOccupatedSpace :Observable<number>;
+  public totalOccupatedSpace = 0;
   public uploadTaskDivOpened = false;
   public uploadTaskDivDetailOpened = true;
   private readonly folderUrl = 'folder';
@@ -80,18 +79,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   public uploadButtonCoordinate: [number, number];
   public uploadTasks: Map<{file: File, isCanceled: boolean, isHover: boolean}, Observable<firebase.storage.UploadTask>> = new Map();
   public ngOnInit(): void {
-    this.totalOccupatedSpace = this.totalOccupatedSpaceSubject.asObservable();
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseKeys);
     }
     this.contextMenuService.getOpenObservable().subscribe(isContextOpen => {
       this.uploadTaskDivOpened = isContextOpen;
     });
-    this.fileListService.calculateTotalSpace();
     this.fileListService.getTotalSpace().subscribe(totalSpace => {
-      this.totalOccupatedSpaceSubject.next(Math.round(totalSpace * 100) / 100);
+      this.totalOccupatedSpace = (Math.round(totalSpace * 100) / 100);
       this.changeDetectorRef.detectChanges();
     });
+    this.fileListService.calculateTotalSpace();
   }
   public ngAfterViewInit(): void {
   }

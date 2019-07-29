@@ -5,25 +5,44 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '@shared/services/auth.service';
 import { FileListService } from '@shared/services/fileList.service';
+import { trigger, style, state, transition, animate } from '@angular/animations';
+import { AppComponent } from 'src/app/app.component';
 @Component({
   selector: 'app-bin',
   templateUrl: './bin.component.html',
-  styleUrls: ['./bin.component.scss']
+  styleUrls: ['./bin.component.scss'],
+  animations: [
+    trigger('openClose', [
+      state('open', style({
+        opacity: 1,
+        height : '*',
+      })),
+      state('closed', style({
+        opacity: 0,
+        height: '0px',
+      })),
+      transition('closed => open', [
+        animate('0.1s')
+      ]),
+    ]),
+  ],
 })
 export class BinComponent implements OnInit {
 
-  public loading;
+  public loading = true;
   public dataSource = new MatTableDataSource();
-  public displayedColumns: string[] = ['name', 'owner'];
+  public displayedColumns: string[] = ['name', 'ownerName'];
   public columnCellName: Map<string, string> = new Map([
     ['name', 'Name'],
-    ['owner', 'Owner'],
+    ['ownerName', 'Owner'],
     // ['lastModified', 'Last Modified'],
     // ['size', 'Size']
   ]);
   public selectedRow: Set<FileItem> = new Set();
   public isContextMenuOpened = false;
   private subscriptions: Subscription[] = [];
+  public contextMenuTop = 0;
+  public contextMenuLeft = 0;
   constructor(
     private auth: AuthService,
     public route: Router,
@@ -34,6 +53,7 @@ export class BinComponent implements OnInit {
       this.subscriptions.push(this.fileListService.getDeletedFiles(user.uid).subscribe(async result => {
         if (result !== null) {
           this.dataSource.data = result;
+          this.loading = false;
         }
       }));
     })
@@ -63,12 +83,12 @@ export class BinComponent implements OnInit {
       this.selectedRow.add(element);
     }
     if (event.target instanceof Element) {
-      // this.contextMenuTop = event.clientY - AppComponent.toolbarHeight;
-      // this.contextMenuLeft = event.clientX - AppComponent.sideNavWidth;
+      this.contextMenuTop = event.clientY - AppComponent.toolbarHeight;
+      this.contextMenuLeft = event.clientX - AppComponent.sideNavWidth;
     }
     if (this.isContextMenuOpened) {
       this.isContextMenuOpened = false;
-      setTimeout(() => this.isContextMenuOpened = true, 150);
+      setTimeout(() => this.isContextMenuOpened = true, 50);
     } else {
 
       this.isContextMenuOpened = true;
@@ -77,5 +97,8 @@ export class BinComponent implements OnInit {
   }
   public onRightClick(event: MouseEvent) {
     event.preventDefault();
+  }
+  public closeContextMenu(){
+    this.isContextMenuOpened = false;
   }
 }

@@ -37,4 +37,8 @@
         </div>
       </ng-template>   
   </mat-card>
+  <!-- <app-contextMenu [@openClose]="isContextMenuOpened ? 'open' : 'closed'"  [top]="contextMenuTop" [left]="contextMenuLeft" [fileItems]="selectedRow">
+  </app-contextMenu> -->
+  <app-binContextMenu [@openClose]="isContextMenuOpened ? 'open' : 'closed'"  [top]="contextMenuTop" [left]="contextMenuLeft" [fileItems]="selectedRow" (clicked)="closeContextMenu()">
+  </app-binContextMenu>
 </ng-template>

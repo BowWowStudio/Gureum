@@ -14,6 +14,7 @@ export class FileListService {
   private db: firebase.firestore.CollectionReference;
   private totalSpaceSubject: Subject<number> = new Subject<number>();
   private readonly fileListSubject = new BehaviorSubject<FileDataStore[]>(null);
+  private readonly binFileListSubject = new BehaviorSubject<FileDataStore[]>(null);
   constructor(private crypto: CryptoService, private authService: AuthService) {
     this.db = firebase.firestore().collection('document');
   }
@@ -33,9 +34,17 @@ export class FileListService {
   }
   public deleteFromFileList(docId: string) {
     this.fileListSubject.subscribe(fileLists => {
-      if (fileLists.some(fileList => fileList.hash === docId)) {
+      if (fileLists !== null && fileLists.some(fileList => fileList.hash === docId)) {
         const newFileList = fileLists.filter(fileList => fileList.hash !== docId);
         this.fileListSubject.next(newFileList);
+      }
+    });
+  }
+  public deleteFromBinFileList(docId: string) {
+    this.binFileListSubject.subscribe(fileLists => {
+      if (fileLists.some(fileList => fileList.hash === docId)) {
+        const newFileList = fileLists.filter(fileList => fileList.hash !== docId);
+        this.binFileListSubject.next(newFileList);
       }
     });
   }
@@ -51,12 +60,15 @@ export class FileListService {
     return this.fileListSubject.asObservable();
   }
   public getDeletedFiles(uid: string): Observable<FileDataStore[]> {
-    const returnSubject = new Subject<FileDataStore[]>();
     this.db.where('owner', '==', uid).where('isDeleted', '==', true).get().then(querysnapshot => {
-      returnSubject.next(
-        querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc()));
+      const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc())
+      const namePromises = [];
+      datas.forEach(data => namePromises.push(this.authService.getUserName(uid).then(name => data.ownerName = name)));
+      Promise.all(namePromises).then(()=>{
+        this.binFileListSubject.next(datas);
+      });
     });
-    return returnSubject.asObservable();
+    return this.binFileListSubject.asObservable();
   }
   public getHierarchy(folderId: string): Observable<HierArchy[]> {
     const newObservable = new Subject<HierArchy[]>();
@@ -79,6 +91,7 @@ export class FileListService {
   }
   public calculateTotalSpace() {
     this.authService.getUserPromise().then(async userInfo => {
+      console.log(userInfo);
       if (userInfo !== null) {
         const stoargeRef = firebase.storage().ref(userInfo.uid);
         const listResult = await stoargeRef.listAll();

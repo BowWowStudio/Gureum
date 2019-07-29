@@ -70,13 +70,18 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
       resolve(true);
     });
   }
-  public async fileDelete(files: Set<FileItem>) {
-    for await(const file of Array.from(files)) {
-      this.authService.getUserPromise().then(async user => {
-        this.db.collection('document').doc(file.hash).delete();
-        firebase.storage().ref(user.uid).child(file.hash).delete();
-      });
-    }
+  public async fileDelete(files: Set<FileItem>): Promise<boolean> {
+    return new Promise<boolean>(async resolve => {
+      for await(const file of Array.from(files)) {
+        this.authService.getUserPromise().then(async user => {
+          this.db.collection('document').doc(file.hash).delete();
+          if(!file.isFolder){
+            firebase.storage().ref(user.uid).child(file.hash).delete();
+          }
+        });
+      }
+      resolve(true);
+    });
   }
   public async fileUploadCancel(uploadTask: firebase.storage.UploadTask) {
     uploadTask.cancel();
@@ -100,7 +105,14 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
       this.download(content, 'files');
     }
   }
-
+  public async restoreFile(files: Set<FileItem>): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      for await (const file of Array.from(files)) {
+        this.db.collection('document').doc(file.hash).update({ isDeleted: false });
+      }
+      resolve(true);
+    });
+  }
 
   private download(blob: Blob, name: string) {
     saveAs(blob, name);

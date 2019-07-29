@@ -61,7 +61,9 @@ export class AuthService {
   public getUserPromise(): Promise<firebase.User> {
     return new Promise(resolve => {
       this.userSubject.asObservable().subscribe(user => {
-        resolve(user);
+        if(user !== null){
+          resolve(user);
+        }
       });
     });
   }

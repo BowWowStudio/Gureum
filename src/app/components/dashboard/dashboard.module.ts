@@ -26,6 +26,8 @@ import { SettingComponent } from './setting/setting.component';
 import { BinComponent } from './bin/bin.component';
 import { RecentComponent } from './recent/recent.component';
 import { StarComponent } from './star/star.component';
+import { BinContextMenuComponent } from './bin/binContextMenu/binContextMenu.component';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
@@ -44,7 +46,9 @@ import { StarComponent } from './star/star.component';
     MatProgressSpinnerModule,
     MatTableModule,
     MatMenuModule,
-    MatDialogModule
+    MatDialogModule,
+    BrowserAnimationsModule,
+    NoopAnimationsModule
   ],
   declarations: [
     ShareComponent,
@@ -55,6 +59,7 @@ import { StarComponent } from './star/star.component';
     ContextMenuComponent,
     SettingComponent,
     BinComponent,
+    BinContextMenuComponent,
     RecentComponent,
     StarComponent
   ],
