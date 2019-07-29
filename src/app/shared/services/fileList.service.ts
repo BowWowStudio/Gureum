@@ -63,6 +63,17 @@ export class FileListService {
       }
     });
   }
+  public newFolderInFileList(fileData : FileDataStore){
+    this.fileListSubject.subscribe(async fileLists => {
+      if (fileLists !== null && fileLists.every(fileList=>fileList.hash !== fileData.hash)) {
+        await this.authService.getUserName(fileData.owner).then(name => fileData.ownerName = name);
+        const newFileList = [...fileLists];
+        newFileList.push(fileData);
+        newFileList.sort(this.sortFunc());
+        this.fileListSubject.next(newFileList);
+      }
+    });
+  }
   public fileDataStoreToFileListDetail(uid: string, folderId: string = null): Observable<FileDataStore[]> {
     this.db.where('owner', '==', uid).where('parent', '==', folderId).where('isDeleted', '==', false).get().then(querysnapshot => {
       const datas = querysnapshot.docs.map(doc => doc.data() as FileDataStore).sort(this.sortFunc());

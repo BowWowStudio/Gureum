@@ -20,6 +20,5 @@ export class ToolbarComponent implements OnInit {
     } else {
       this.route.navigate(['/dashboard', 'folder', hash]);
     }
-    // this.folderClick.emit();
   }
 }

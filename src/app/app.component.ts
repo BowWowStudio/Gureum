@@ -135,7 +135,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         const hash = this.getHashFromURL(this.route.url);
         await this.fileUploadService.newFolder(folderName, hash);
       } else {
-        await this.fileUploadService.newFolder(folderName);
+        const newFileData = await this.fileUploadService.newFolder(folderName);
+        this.fileListService.newFolderInFileList(newFileData);
       }
     });
   }

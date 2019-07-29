@@ -19,23 +19,26 @@ export class FileUploadService {
 constructor(private crypto: CryptoService, private authService: AuthService, private contextMenuService: ContextMenuService) {
   this.db = firebase.firestore();
 }
-  public async newFolder(name, parentFolderDocId = null): Promise<void> {
-    this.authService.getUserPromise().then(async user => {
-      const uid = user.uid;
-      const docId = this.crypto.findFolderHash(name, uid, new Date());
-      let newFolder: FileDataStore;
-      const documentRef = this.db.collection('document');
-      newFolder = {
-        bucket : firebase.storage().ref(user.uid).bucket,
-        isFolder : true,
-        name : name,
-        owner : uid,
-        parent: parentFolderDocId,
-        hash: docId,
-        isDeleted: false,
-        star: false,
-      };
-      documentRef.doc(docId).set(newFolder);
+  public async newFolder(name, parentFolderDocId = null): Promise<FileDataStore> {
+    return new Promise(resolve => {
+      this.authService.getUserPromise().then(async user => {
+        const uid = user.uid;
+        const docId = this.crypto.findFolderHash(name, uid, new Date());
+        let newFolder: FileDataStore;
+        const documentRef = this.db.collection('document');
+        newFolder = {
+          bucket : firebase.storage().ref(user.uid).bucket,
+          isFolder : true,
+          name : name,
+          owner : uid,
+          parent: parentFolderDocId,
+          hash: docId,
+          isDeleted: false,
+          star: false,
+        };
+        await documentRef.doc(docId).set(newFolder);
+        resolve(newFolder);
+      });
     });
   }
   public fileUpload(file: File, parentFolderDocId = null): Observable<firebase.storage.UploadTask> {
@@ -75,7 +78,7 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
       for await(const file of Array.from(files)) {
         this.authService.getUserPromise().then(async user => {
           this.db.collection('document').doc(file.hash).delete();
-          if(!file.isFolder){
+          if (!file.isFolder) {
             firebase.storage().ref(user.uid).child(file.hash).delete();
           }
         });
@@ -83,7 +86,7 @@ constructor(private crypto: CryptoService, private authService: AuthService, pri
       resolve(true);
     });
   }
-  public async setStarFiles(files: Set<FileItem>): Promise<boolean>{
+  public async setStarFiles(files: Set<FileItem>): Promise<boolean> {
     return new Promise(async (resolve) => {
       for await (const file of Array.from(files)) {
         this.db.collection('document').doc(file.hash).update({ star: !file.star });

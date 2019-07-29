@@ -101,7 +101,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     if (hash === undefined || hash === null) {
       this.route.navigate(['/dashboard', 'main']);
     } else {
-      this.route.navigate(['/dashboard', 'folder', hash], {queryParams: {hash: hash}});
+      this.route.navigate(['/dashboard', 'folder', hash]);
     }
   }
   public toggleSelect(element: FileItem, event: KeyboardEvent) {
